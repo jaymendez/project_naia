@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include ../layouts/head %>
+</head>
+<header>
+<% include ../layouts/sidenav %>
+</header>
+
+    
+    <body class="container">
+        <main>
+            <div class="" style="margin-left: 10%">
+
+                <a href="/flight/create" class="waves-effect waves-light btn"><i class="material-icons left">add_box</i>Add Flight</a>
+                <table id="table" class="display" width="100%">
+                    <thead>
+    
+                        <tr>
+                            <th>Flight Number</th>
+                            <th>Plan Start Time</th>
+                            <th>Plan End Time</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Airplane Model</th>
+                            <th>Passenger Count</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </main>
+    
+
+
+
+
+
+    <footer>
+        <% include ../layouts/footer %>
+    </footer>
+    
+    </body>
+    
+    
+    
+</html>
+<script>
+ $(document).ready(() => {
+        // let table = $('#table').DataTable();
+        populateTable();
+    });
+
+    function populateTable() {
+        $.getJSON("/flight",(data) => {
+            console.log(data);
+            
+            table = $('#table').DataTable({
+                data : data,
+                columns: [
+                    { data: "flight_number" }, 
+                    { data: "starttime" },
+                    { data: "endtime" },
+                    { data: "departure_time" },
+                    { data: "arrival_time" },
+                    { data: "airplane.name" },
+                    { data: "airplane.passenger_capacity" },
+                    { 
+                        data: "id",
+                        render: function(data, type, row, meta) {
+                            if (!data) return "";
+                            else {
+                                return '<center><a href="/dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
+                            }
+                        }
+                    },
+                ],
+                "columnDefs": [ {
+                    "targets": 7,
+                    "data" : "id",
+                    "render": function ( data, type, row ) 
+                    {
+                        return '<center><a href="dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
+                    }
+                }]
+            })
+
+            $('#trySubmit').on('click',()=>{
+                table.draw();
+            })
+        })
+    }
+</script>

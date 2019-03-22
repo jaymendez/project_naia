@@ -1,0 +1,143 @@
+<style>
+    .luggage {
+        /* width: 20%; */
+        height: 20%;
+    }
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include ../layouts/head %>
+</head>
+<header>
+<% include ../layouts/sidenav %>
+</header>
+    <body class="container">
+        <% include ../element/viewLuggageDetails %>
+        <main>
+            <div class="" style="margin-left: 10%">
+                <a href="/flight/create" class="waves-effect waves-light btn"><i class="material-icons left">add_box</i>Add Flight</a>
+                <a href="#modal2" id="viewDetails" data-flightId="<%= flight.id %>" data-flight_number="<%= flight.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a>
+                <table id="table" class="display centered highlight" width="100%">
+                    <thead>
+                        <tr class=>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                            <th>D</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body">
+                        <%
+                        const count = airplane.passenger_capacity;
+                        const row = count/4;
+                        if (count % 4 == 0) {
+                            for (i=0; i < row; i++) { %>
+                                <tr>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                </tr>
+                            <% }
+                        } else if (count % 4 == 2) {
+                            for (i=0; i < Math.floor(row); i++) { %>
+                                <tr>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                </tr>
+                        <%  } %>
+                            <tr>
+                                <td></td>
+                                <td><img class="luggage" src="/public/images/bag.png"></td>
+                                <td><img class="luggage" src="/public/images/bag.png"></td>
+                                <td></td>
+                            </tr>
+                    <%  } %>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    
+
+
+
+
+
+    <footer>
+        <% include ../layouts/footer %>
+    </footer>
+    
+    </body>
+    
+    
+    
+</html>
+<script>
+  // Initialize Firebase
+  // TODO: Replace with your project's customized code snippet
+$(document).ready(() => {
+    dataTable = $('.luggageDetailsTable').DataTable({}) 
+    $('.modal').modal();
+    var config = {
+        apiKey: "AIzaSyCyvVSCRq0_gLLXBQvdWFUfQGcQ4Sn9sJk",
+        authDomain: "n-a-i-a.firebaseapp.com",
+        databaseURL: "https://n-a-i-a.firebaseio.com",
+        projectId: "n-a-i-a",
+        storageBucket: "<BUCKET>.appspot.com",
+        messagingSenderId: "478587123901",
+    };
+    firebase.initializeApp(config);
+    var database = firebase.database();
+
+    var rfidRef = firebase.database().ref('rfid:');
+    
+    rfidRef.once('value').then((snapshot)=> {
+        console.log(snapshot.val().RFID_ID);
+        console.log(snapshot.key);
+    });
+
+    $('#viewDetails').on('click', function() {
+        const flight_id = $(this).data('flightid');
+        const flight_num = $(this).data('flight_number');
+        $('.luggageDetailsBody').html('');
+        $.get("/luggage/details",{
+            flight_id : flight_id
+        }).done( (json) => {
+            dataTable.destroy();
+            dataTable = $('.luggageDetailsTable').DataTable({
+                data: json.data,
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        autoPrint: false,
+                        extend: 'print',
+                        title: '',
+                        messageTop: 'Luggage Logs:',
+                        customize: function (win) {
+                            $(win.document.body)
+                            .prepend('<center><h5>Luggage Report Summary for: <strong></br>'+ flight_num +'</strong></h5></center>'+
+                                    'Date:' +  '</br> '+
+                                    'Total Arrived:' + ' </br>' +
+                                    'Total Delayed:' + ' </br>' 
+                                
+                            );
+                        }
+                    }
+                ],
+                columns: [
+                    { data: 'name'},
+                    { data: 'arrival_time'},
+                    { data: 'departure_time'},
+                ]
+            }) // ===== END OF DATATABLES
+        })
+    });
+
+    
+});
+</script>

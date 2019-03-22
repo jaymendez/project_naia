@@ -1,0 +1,85 @@
+<!-- views/pages/index.ejs -->
+<style>
+
+    </style>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <% include ../layouts/head %>
+    </head>
+    <header>
+    <% include ../layouts/sidenav %>
+    </header>
+    
+        
+    <body class="container">
+    <main>
+        <div class="row container z-depth-3">
+            <div class="col s12">    
+                <div class="jumbotron">
+                    <h2 class=""> <%= title %> </h2>
+                    <p>Please fill in the corresponding information to register a passenger. </p>
+                </div>
+                </div class="container">
+                    <div class="row" style="width: 100%">
+                        <form action="/passenger/register" method="post" class="col s12">
+                            
+                            <input name="id" type="hidden" value="<%= airplane.id %>" id="id" />
+    
+                            <div class="input-field col s12">
+                                <input id="passenger_code" type="text" class="validate" name="passenger_code" value="<%= airplane.name %>">
+                                <label for="passenger_code">Passenger Code</label>
+                            </div>
+
+                             
+                            <div class="input-field col s12">
+                                <input id="seat_number" type="text" class="validate" name="seat_number" value="<%= airplane.name %>">
+                                <label for="seat_number">Seat Number</label>
+                            </div>
+
+                                 
+                            <div class="input-field col s12">
+                                <input id="first_name" type="text" class="validate" name="first_name" value="<%= airplane.name %>">
+                                <label for="first_name">First Name</label>
+                            </div>
+
+                                 
+                            <div class="input-field col s12">
+                                <input id="last_name" type="text" class="validate" name="last_name" value="<%= airplane.name %>">
+                                <label for="last_name">Last Name</label>
+                            </div>
+
+                                 
+                            <div class="input-field col s12">
+                                <input id="email" type="email" class="validate" name="email" value="<%= airplane.name %>">
+                                <label for="email">Email</label>
+                            </div>
+                            
+                            <div class="input-field col s12">
+                                <input id="mobile_number" type="tel" class="validate" name="mobile_number" value="<%= airplane.passenger_capacity %>">
+                                <label for="mobile_number">Mobile Number</label>
+                            </div>
+
+                            <div class="input-field col s12">
+                                <input id="flight_number" type="text" class="validate" name="flight_number" value="<%= airplane.passenger_capacity %>">
+                                <label for="flight_number">Flight Number</label>
+                            </div>
+                            <button class="btn waves-effect waves-light right" type="submit">Submit
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+    <% include ../layouts/footer %>
+    </footer>
+    
+    </body>
+    
+    
+    
+    </html>

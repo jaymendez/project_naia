@@ -1,0 +1,60 @@
+<!-- views/pages/index.ejs -->
+<style>
+
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include ../layouts/head %>
+</head>
+<header>
+<% include ../layouts/sidenav %>
+</header>
+
+    
+<body class="container">
+<main>
+    <div class="row container z-depth-3">
+        <div class="col s12">    
+            <div class="jumbotron">
+                <h2 class=""> <%= title %> </h2>
+                <p>Please fill in the corresponding information to create a new airplane </p>
+            </div>
+            </div class="container">
+                <div class="row" style="width: 100%">
+                    <form action="/airplane/create" method="post" class="col s12">
+                        
+                        <input name="id" type="hidden" value="<%= airplane.id %>" id="id" />
+
+                        <div class="input-field col s12">
+                            <input id="airplane_name" type="text" class="validate" name="name" value="<%= airplane.name %>">
+                            <label for="airplane_name">Airplane Name</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <input id="passenger_capacity" type="text" class="validate" name="passenger_capacity" value="<%= airplane.passenger_capacity %>">
+                            <label for="passenger_capacity">Passenger Capacity</label>
+                        </div>
+
+                        <div class="input-field col s12">
+                            <input id="select_airplanetype" type="text" class="validate" name="airplane_type" value="<%= airplane.airplane_type %>">
+                            <label for="select_airplanetype">Airplane Type</label>
+                        </div>
+                        <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+<% include ../layouts/footer %>
+</footer>
+
+</body>
+
+
+
+</html>

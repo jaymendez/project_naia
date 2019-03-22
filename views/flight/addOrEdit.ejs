@@ -1,0 +1,138 @@
+<!-- views/pages/index.ejs -->
+<style>
+
+
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include ../layouts/head %>
+</head>
+<header>
+<% include ../layouts/sidenav %>
+
+</header>
+<!-- 
+flight_number
+plan_starttime
+plan_endtime
+departure_time
+arrival_time
+airplane_id -->
+
+<body class="container">
+    
+<% include ../element/availableAirplaneModal %>
+<main>
+    <div class="row container z-depth-3">
+        <div class="col s12">    
+            <div class="jumbotron">
+                <h2 class=""> <%= title %> </h2>
+                <p>Please fill in the corresponding information to create a new flight </p>
+            </div>
+            <div class="row" style="width: 100%">
+                <form id="create-form" action="/flight/create" method="post" class="col s12">
+                    
+                    <input name="id" type="hidden" value="<%= flight.id %>" id="id" />
+                    
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input id="flight_number" type="text" class="validate" name="flight_number" value="<%= flight.flight_number %>">
+                        <label for="flight_number">Flight Number</label>
+                        
+                    </div>
+                    <div class="input-field col s6">
+                        
+                        <i class="material-icons prefix">date_range</i>
+                        <input id="plan_starttime" type="text" class="datepicker" name="plan_starttime" value="<%= flight.plan_starttime %>">
+                        <label for="plan_starttime">Start Time</label>
+                    </div> 
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">date_range</i>
+                        <input id="plan_endtime" type="text" class="datepicker" name="plan_endtime" value="<%= flight.plan_endtime %>">
+                        <label for="plan_endtime">End Time</label>
+                    </div>
+
+                    <div class="input-field col s12">
+                        <input id="select_airplane" type="text" class="validate" name="airplane_id" value="<%= flight.airplane_id %>" style="width: 90%" readonly>
+                        <label for="select_airplane">Airplane</label>
+                        <a class="waves-effect waves-teal btn-flat modal-trigger assign-airplane-btn" href="#modal1"><i class="material-icons left" style="font-size: 2rem">assignment</i></a>
+                    </div>
+                    <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+                        <i class="material-icons right">send</i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+<% include ../layouts/footer %>
+</footer>
+
+</body>
+
+
+
+</html>
+
+<script>
+    $(document).ready(() => {
+        $('.datepicker').datetimepicker();
+        $('.modal').modal({
+            onOpenEnd : () => {
+                
+            }
+        });
+
+        $('.assign-airplane-btn').on('click', () => {
+            getAirplanes();
+        });
+    });
+
+    getAirplanes = () => {
+        const starttime = $('#plan_starttime').val();
+        const endtime = $('#plan_endtime').val();
+        $.get('/flight/getAvailableAirplane', {
+                starttime : starttime,
+                endtime : endtime
+        })
+        .done((json) => {
+            console.log(json);
+            if (json) {
+                populateAirplaneTable(json.airplane);
+            }   
+            else {
+                $(".availableAirplaneTable tbody").html("<p>No planes available</p>");
+            }
+        })
+    }
+
+    populateAirplaneTable = (tableData) => {
+        $(".availableAirplaneTable tbody").html("");
+        let data;
+        tableData.forEach((element,key) => {
+            console.log(element);
+            console.log(key);
+            data += (
+                "<tr>"+
+                    "<td><a href='#!' class='manualAssign' onclick=manualAssign('" + encodeURIComponent(element['name']) + "') data-model='"+element['name']+"' data-id="+element['id']+">"+element['name']+"</a></td>"+
+                    "<td>"+element['passenger_capacity']+"</td>"+
+                    "<td>"+element['airplane_type']+"</td>"+
+                "</tr>"
+            );
+        });
+        $(".availableAirplaneTable tbody").html(data);
+    }
+
+    manualAssign = (model) => {
+        console.log(model);
+        $('#create-form #select_airplane').val(decodeURIComponent(model));
+        M.updateTextFields();
+        $('#modal1').modal('close');
+    }
+
+
+</script>
