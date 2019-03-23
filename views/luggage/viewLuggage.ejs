@@ -3,6 +3,12 @@
         /* width: 20%; */
         height: 20%;
     }
+    .td-bg {
+        background-position: center; 
+        background-size: contain; 
+        background-repeat: no-repeat;
+        height: 200px;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -18,27 +24,29 @@
         <main>
             <div class="" style="margin-left: 10%">
                 <a href="/flight/create" class="waves-effect waves-light btn"><i class="material-icons left">add_box</i>Add Flight</a>
-                <a href="#modal2" id="viewDetails" data-flightId="<%= flight.id %>" data-flight_number="<%= flight.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a>
+                <a href="#modal2" id="viewDetails" data-flightId="<%= resultData.flight_id %>" data-flight_number="<%= resultData.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a>
                 <table id="table" class="display centered highlight" width="100%">
                     <thead>
                         <tr class=>
-                            <th>A</th>
-                            <th>B</th>
-                            <th>C</th>
-                            <th>D</th>
+                            <th width="25%">A</th>
+                            <th width="25%">B</th>
+                            <th width="25%">C</th>
+                            <th width="25%">D</th>
                         </tr>
                     </thead>
                     <tbody class="table-body">
                         <%
-                        const count = airplane.passenger_capacity;
+                        const count = resultData.passenger_capacity;
                         const row = count/4;
                         if (count % 4 == 0) {
                             for (i=0; i < row; i++) { %>
                                 <tr>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <!-- <td background="/public/images/bag.png">seat-<%= i+1 %>A</td> -->
+                                    
+                                    <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span></td>
+                                    <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span></td>
+                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span></td>
+                                    <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span></td>
                                 </tr>
                             <% }
                         } else if (count % 4 == 2) {
@@ -81,7 +89,7 @@
   // Initialize Firebase
   // TODO: Replace with your project's customized code snippet
 $(document).ready(() => {
-    dataTable = $('.luggageDetailsTable').DataTable({}) 
+    dataTable = $('.luggageDetailsTable').DataTable({})
     $('.modal').modal();
     var config = {
         apiKey: "AIzaSyCyvVSCRq0_gLLXBQvdWFUfQGcQ4Sn9sJk",
@@ -93,12 +101,18 @@ $(document).ready(() => {
     };
     firebase.initializeApp(config);
     var database = firebase.database();
-
+    
     var rfidRef = firebase.database().ref('rfid:');
     
     rfidRef.once('value').then((snapshot)=> {
         console.log(snapshot.val().RFID_ID);
         console.log(snapshot.key);
+    });
+    
+    rfidRef.on('child_changed', function(data) {
+        console.log(data);
+        const rfid = data.val();
+        scanRfid(rfid);
     });
 
     $('#viewDetails').on('click', function() {
@@ -123,8 +137,7 @@ $(document).ready(() => {
                             .prepend('<center><h5>Luggage Report Summary for: <strong></br>'+ flight_num +'</strong></h5></center>'+
                                     'Date:' +  '</br> '+
                                     'Total Arrived:' + ' </br>' +
-                                    'Total Delayed:' + ' </br>' 
-                                
+                                    'Total Delayed:' + ' </br>'   
                             );
                         }
                     }
@@ -136,8 +149,19 @@ $(document).ready(() => {
                 ]
             }) // ===== END OF DATATABLES
         })
-    });
-
-    
+    }); 
 });
+
+function scanRfid(rfid_uid) {
+    $.get("/rfidScan",{
+        rfid: rfid_uid
+    }).then( (json) => {
+        //expected result dito is yung seat number.
+        //first arrival
+        console.log(json);
+        const seat_number = json.seat_number; 
+        $('#seat-'+seat_number).css('background-color','rgb(96, 226, 96)');
+
+    });
+}
 </script>

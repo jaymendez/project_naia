@@ -13,7 +13,11 @@ router.get('/', airplaneController.test);
 
 router.get('/home', (req, res) => {
     var hostname = req.headers.host;
-    res.render('pages/home',{title: 'Express'})
+    res.render('pages/home',{title: ''})
+});
+router.get('/aboutus', (req, res) => {
+    var hostname = req.headers.host;
+    res.render('pages/home',{title: ''})
 });
 /* Airplane Routes */
 router.get('/airplane/create', (req, res) => {
@@ -61,8 +65,10 @@ router.get('/luggage/register', (req, res) => {
 
     });
 });
+
+router.get('/rfidScan', luggageController.updateLuggageStatus);
 router.post('/luggage/register', luggageController.registerLuggage);
-router.get('/luggage/details', luggageController.viewLuggageDetails)
+router.get('/luggage/details', luggageController.viewLuggageDetails);
 
 
 /* Passenger */

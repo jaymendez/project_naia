@@ -30,13 +30,13 @@ const Luggage = sequelize.define('luggage', {
     },
     departure_time: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: '1111-11-11 11:11:11',
+        allowNull: true,
+        // defaultValue: '1111-11-11 11:11:11',
     },
     arrival_time: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: '1111-11-11 11:11:11',
+        allowNull: true,
+        // defaultValue: '1111-11-11 11:11:11',
     },
     weight: {
         type: Sequelize.INTEGER,
