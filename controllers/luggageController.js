@@ -1,11 +1,13 @@
 const express = require('express');
 const moment = require('moment');
+const Moment = require('moment-timezone');
 const Flight = require('../models/flight.model');
 const Airplane = require('../models/airplane.model');
 const Passenger = require('../models/passenger.model');
 const Luggage = require('../models/luggage.model')
 
 
+moment.tz.setDefault("Asia/Manila");
 module.exports.registerLuggage = (req, res) => {
     console.log(req.body);
     if (req.body.id) {
@@ -53,9 +55,46 @@ module.exports.getLuggageStatus = (req, res) => {
     /*  
         Mag papasa tayo dito syempre ng Flight number,
         Where yung luggage ay nakapag depart.
-        
-        
     */
+    const flightId = req.query.flightId;
+    Luggage.findAll({
+        where: {flight_id : flightId},
+        raw: true,
+        include: [Passenger]
+    }).then( luggage => {
+        resultData = [];
+        console.log(luggage);
+        var defaultVal = '1111-11-11 11:11:11';
+        luggage.forEach((el, i) => {
+            data = {}
+            
+            arrival_time = el.arrival_time;
+            departure_time = el.departure_time;
+            if (arrival_time !=  defaultVal && departure_time === defaultVal) {
+                //arrived
+                data.seat_number = el['passenger.seat_number'];
+                data.status = 'arrived';
+            }
+
+            if (arrival_time === defaultVal && departure_time === defaultVal) {
+                //delayed or not yet arrived
+                data.seat_number = el['passenger.seat_number'];
+                data.status = 'delayed';
+
+            }
+
+            if (arrival_time != defaultVal && departure_time != defaultVal) {
+                //picked up
+                data.seat_number = el['passenger.seat_number'];
+                data.status = 'pickedUp';
+            }
+            resultData.push(data);
+        })
+        res.json({
+            resultData : resultData
+        });
+    });
+
 }
 
 module.exports.updateLuggageStatus = (req, res) => {
@@ -63,6 +102,7 @@ module.exports.updateLuggageStatus = (req, res) => {
         Dito papasok if na tatap yung luggage sa carousel. 
     */
     //Receives RFID
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
     const rfid = req.query.rfid;
     console.log(rfid);
     Luggage.findOne({
@@ -72,11 +112,15 @@ module.exports.updateLuggageStatus = (req, res) => {
     }).then( luggage => {
         console.log(luggage);
         seat_number = luggage['passenger.seat_number'];
-        arrival_time = moment(new Date(luggage.arrival_time).toISOString(), "YYYY-MM-DD HH:mm").format('YYYY-MM-DD HH:mm:ss');
-        departure_time = moment(new Date(luggage.departure_time).toISOString(), "YYYY-MM-DD HH:mm").format('YYYY-MM-DD HH:mm:ss');
+        // arrival_time = moment(new Date(luggage.arrival_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
+        // departure_time = moment(new Date(luggage.departure_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
+        arrival_time = luggage.arrival_time; 
         console.log(arrival_time);
-        req.body.arrival_time = moment(new Date().toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm:ss');
-        if (arrival_time === '1111-11-12 03:07:00' || arrival_time === '1111-11-11 11:11:00') {
+        departure_time = luggage.departure_time; 
+        req.body.arrival_time = moment().format('YYYY-MM-DD HH:mm:ss');
+        console.log(req.body);
+        console.log(arrival_time);
+        if (arrival_time === '1111-11-11 11:11:11') {
             //no time in
             Luggage.update(req.body,{
                 where : { 
@@ -84,6 +128,7 @@ module.exports.updateLuggageStatus = (req, res) => {
                 }
             })
             .then( data => {
+                console.log(data);
                 res.json({
                     seat_number : seat_number,
                 });
@@ -119,10 +164,16 @@ module.exports.viewDashboard = (req, res) => {
                 data = {};
                 resultData.flight_id = el.id;
                 resultData.flight_number = el.flight_number;
-                resultData.starttime = moment(new Date(el.plan_starttime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
-                resultData.endtime = moment(new Date(el.plan_endtime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
-                resultData.departure_time = el.departure_time ?  moment(el.departure_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
-                resultData.arrival_time = el.arrival_time ? moment(el.arrival_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+
+                // resultData.starttime = moment(new Date(el.plan_starttime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
+                // resultData.endtime = moment(new Date(el.plan_endtime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
+                // resultData.departure_time = el.departure_time ?  moment(el.departure_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+                // resultData.arrival_time = el.arrival_time ? moment(el.arrival_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+                resultData.starttime = moment(el.plan_starttime).format('MM/DD/YYYY HH:mm');
+                resultData.endtime = moment(el.plan_endtime).format('MM/DD/YYYY HH:mm');
+                resultData.departure_time = el.departure_time ? moment(el.departure_time).format('MM/DD/YYYY HH:mm') : '';
+                resultData.arrival_time = el.arrival_time ? moment(el.arrival_time).format('MM/DD/YYYY HH:mm') : '';
+
                 resultData.airplane_id = el['airplane.id'];
                 resultData.airplane_name = el['airplane.name'];
                 resultData.passenger_capacity = el['airplane.passenger_capacity'];

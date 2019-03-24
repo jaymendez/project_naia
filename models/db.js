@@ -14,6 +14,18 @@ const sequelize = new Sequelize(configDB.mysql.database, configDB.mysql.user, co
         acquire: 30000,
         idle: 10000
     },
+    dialectOptions: {
+        useUTC: false, //for reading from database
+        dateStrings: true,
+  
+        typeCast: function (field, next) { // for reading from database
+          if (field.type === 'DATETIME') {
+            return field.string()
+          }
+          return next()
+        },
+    },
+    timezone: 'Asia/Manila' //for writing to database
 });
 
 sequelize.authenticate()

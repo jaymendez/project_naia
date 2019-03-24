@@ -57,19 +57,27 @@ module.exports.view = async (req,res) => {
     }).then( flight => {
         let returnData = []
         let airplane = {};
+        console.log(flight);
         flight.forEach((element,key) => {
             var data = {airplane:{}};
             console.log(element.plan_starttime)
             data.id = element.id;
             data.flight_number = element.flight_number;
-            data.starttime = moment(new Date(element.plan_starttime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
-            data.endtime = moment(new Date(element.plan_endtime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
-            data.departure_time = element.departure_time ?  moment(element.departure_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
-            data.arrival_time = element.arrival_time ? moment(element.arrival_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+            // data.starttime = moment(new Date(element.plan_starttime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
+            // data.endtime = moment(new Date(element.plan_endtime).toISOString(), "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm');
+            // data.departure_time = element.departure_time ?  moment(element.departure_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+            // data.arrival_time = element.arrival_time ? moment(element.arrival_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+            
+            data.starttime = moment(element.plan_starttime).format('MM/DD/YYYY HH:mm');
+            data.endtime = moment(element.plan_endtime).format('MM/DD/YYYY HH:mm');
+            data.departure_time = element.departure_time ? moment(element.departure_time).format('MM/DD/YYYY HH:mm') : '';
+            data.arrival_time = element.arrival_time ? moment(element.arrival_time).format('MM/DD/YYYY HH:mm') : '';
+
             data.airplane.name = element['airplane.name'];
             data.airplane.passenger_capacity = element['airplane.passenger_capacity'];
             data.airplane.airplane_type = element['airplane.airplane_type'];
             returnData.push(data);
+            console.log(data);
         })
         res.json(returnData);
         // res.render('airplane/airplanesjson',{airplane: airplane});

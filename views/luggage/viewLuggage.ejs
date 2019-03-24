@@ -81,16 +81,16 @@
     </footer>
     
     </body>
-    
-    
-    
+     
 </html>
 <script>
   // Initialize Firebase
   // TODO: Replace with your project's customized code snippet
-$(document).ready(() => {
+  $(document).ready(() => {
+    getLuggageStatus("<%- resultData.flight_id %>");
     dataTable = $('.luggageDetailsTable').DataTable({})
     $('.modal').modal();
+
     var config = {
         apiKey: "AIzaSyCyvVSCRq0_gLLXBQvdWFUfQGcQ4Sn9sJk",
         authDomain: "n-a-i-a.firebaseapp.com",
@@ -164,4 +164,27 @@ function scanRfid(rfid_uid) {
 
     });
 }
-</script>
+
+function getLuggageStatus(flight_id) {
+    $.get('/getLuggageStatus',{
+        flightId : flight_id
+    }).then( (json) => {
+        console.log(json);
+        json.resultData.forEach((el, i) => {
+            if (el.status === 'arrived') {
+                $('#seat-'+el.seat_number).css('background-color','rgb(96, 226, 96)');
+            }
+            if (el.status === 'pickedUp') {
+                $('#seat-'+el.seat_number).css('background-color','#5498ff');
+            }
+            if (el.status === 'delayed') {
+                $('#seat-'+el.seat_number).css('background-color','#f44336');
+            }
+        });
+    });
+}
+
+function getLuggageCount(flight_id) {
+
+}
+</script> 
