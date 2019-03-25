@@ -68,6 +68,7 @@ router.get('/luggage/register', (req, res) => {
 
 router.get('/rfidScan', luggageController.updateLuggageStatus);
 router.get('/getLuggageStatus', luggageController.getLuggageStatus);
+router.get('/getLuggageCount', luggageController.getLuggageCount);
 router.post('/luggage/register', luggageController.registerLuggage);
 router.get('/luggage/details', luggageController.viewLuggageDetails);
 

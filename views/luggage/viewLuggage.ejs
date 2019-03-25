@@ -52,16 +52,16 @@
                         } else if (count % 4 == 2) {
                             for (i=0; i < Math.floor(row); i++) { %>
                                 <tr>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
-                                    <td><img class="luggage" src="/public/images/bag.png"></td>
+                                    <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span></td>
+                                    <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span></td>
+                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span></td>
+                                    <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span></td>
                                 </tr>
                         <%  } %>
                             <tr>
                                 <td></td>
-                                <td><img class="luggage" src="/public/images/bag.png"></td>
-                                <td><img class="luggage" src="/public/images/bag.png"></td>
+                                <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span></td>
+                                <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span></td>
                                 <td></td>
                             </tr>
                     <%  } %>
@@ -88,6 +88,21 @@
   // TODO: Replace with your project's customized code snippet
   $(document).ready(() => {
     getLuggageStatus("<%- resultData.flight_id %>");
+    getLuggageCount("<%- resultData.flight_id %>");
+    var seconds = 60;
+    window.setInterval(function(){
+        if (seconds > 0)
+            seconds--;
+        // $("#circleBorder").html(seconds);
+        // $("#currDateTime").html("As of " + moment().format('MMMM D YYYY, h:mm a'));
+        if (seconds == 0) {
+            getLuggageStatus("<%- resultData.flight_id %>");
+            
+        }
+        if (seconds <= 0)
+            seconds = 60;
+    }, 1000);
+
     dataTable = $('.luggageDetailsTable').DataTable({})
     $('.modal').modal();
 
@@ -185,6 +200,10 @@ function getLuggageStatus(flight_id) {
 }
 
 function getLuggageCount(flight_id) {
-
+    $.get('/getLuggageCount', {
+        flightId : flight_id
+    }).then( (json) => {
+        console.log(json);
+    })
 }
 </script> 

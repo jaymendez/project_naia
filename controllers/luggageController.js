@@ -63,7 +63,7 @@ module.exports.getLuggageStatus = (req, res) => {
         include: [Passenger]
     }).then( luggage => {
         resultData = [];
-        console.log(luggage);
+        // console.log(luggage);
         var defaultVal = '1111-11-11 11:11:11';
         luggage.forEach((el, i) => {
             data = {}
@@ -110,16 +110,14 @@ module.exports.updateLuggageStatus = (req, res) => {
         raw: true,
         include : Passenger
     }).then( luggage => {
-        console.log(luggage);
+        // console.log(luggage);
         seat_number = luggage['passenger.seat_number'];
         // arrival_time = moment(new Date(luggage.arrival_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
         // departure_time = moment(new Date(luggage.departure_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
         arrival_time = luggage.arrival_time; 
-        console.log(arrival_time);
         departure_time = luggage.departure_time; 
         req.body.arrival_time = moment().format('YYYY-MM-DD HH:mm:ss');
-        console.log(req.body);
-        console.log(arrival_time);
+        
         if (arrival_time === '1111-11-11 11:11:11') {
             //no time in
             Luggage.update(req.body,{
@@ -234,4 +232,38 @@ module.exports.viewLuggageDetails = (req, res) => {
             res.json({data : resultData});
         }
     });
+}
+
+module.exports.getLuggageCount = (req, res) => {
+    const flightId = req.query.flightId;
+
+    Luggage.findAll({
+        where: { flight_id : flightId},
+        raw: true,
+        include: [Passenger]
+    }).then( luggage => {
+        resultData = [];
+        arr = [];
+         
+        luggage.forEach((el, i) => {
+            passenger = el['passenger.passenger_code']
+            resultData[passenger] = resultData[passenger] || [];
+            resultData[passenger]['seat_number'] = el['passenger.seat_number'] || [];
+            resultData[passenger]['luggage'] = resultData[passenger]['luggage'] || [];
+            resultData[passenger]['luggage'].push(el.rfid_uid)            // result
+            resultData[passenger]['luggage_count'] = resultData[passenger]['luggage'].length || [];
+            
+            // resultData[passenger]['luggage_count'] = resultData[passenger]['luggage'].length;
+        });
+        for (var key in resultData) {
+            data = {};
+            data.passenger_code = key; 
+            data.seat_number = resultData[key].seat_number;
+            data.luggage = resultData[key].luggage;
+            data.luggage_count = resultData[key].luggage_count;
+            arr.push(data);
+        }
+        res.json({resultData : arr});
+    });
+
 }
