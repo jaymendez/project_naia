@@ -4,7 +4,7 @@ const Moment = require('moment-timezone');
 const Flight = require('../models/flight.model');
 const Airplane = require('../models/airplane.model');
 const Passenger = require('../models/passenger.model');
-const Luggage = require('../models/luggage.model')
+const Luggage = require('../models/luggage.model');
 
 
 moment.tz.setDefault("Asia/Manila");
@@ -18,7 +18,7 @@ module.exports.registerLuggage = (req, res) => {
          })
          .then( luggage => {
             console.log(luggage);
-            res.redirect('/airplane/view')
+            res.redirect('/airplane/view');
          });
     }
     else {

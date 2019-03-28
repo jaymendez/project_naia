@@ -185,14 +185,13 @@ function getLuggageStatus(flight_id) {
         flightId : flight_id
     }).then( (json) => {
         console.log(json);
+        $('.luggage').css('background-color','rgba(94, 94, 95, 0.59)');
         json.resultData.forEach((el, i) => {
             if (el.status === 'arrived') {
                 $('#seat-'+el.seat_number).css('background-color','rgb(96, 226, 96)');
-            }
-            if (el.status === 'pickedUp') {
+            } else if (el.status === 'pickedUp') {
                 $('#seat-'+el.seat_number).css('background-color','#5498ff');
-            }
-            if (el.status === 'delayed') {
+            } else if (el.status === 'delayed') {
                 $('#seat-'+el.seat_number).css('background-color','#f44336');
             }
         });
@@ -204,6 +203,10 @@ function getLuggageCount(flight_id) {
         flightId : flight_id
     }).then( (json) => {
         console.log(json);
+        json.resultData.forEach((el, i) => {
+            var seatClass = $('#seat-'+el.seat_number);
+            seatClass.data('totalLuggage', el.luggage_count);
+        });
     })
 }
 </script> 
