@@ -12,17 +12,7 @@ var app = express();
 var router = express.Router();
 app.use(express.static('public'));
 
-/* Users */
-//Login page
-router.get('/users/login', (req, res) => {
-    res.render('users/login') 
-});
 
-//Register page
-router.get('/users/register', (req, res) => {
-    res.render('users/register') 
-}); 
-router.post('/users/register', userController.registerUser); 
 
 // router.get('/', airplaneController.test);
 
@@ -100,6 +90,18 @@ router.get('/passenger/register', ensureAuthenticated, (req, res) => {
 });
 router.post('/passenger/register', ensureAuthenticated, passengerController.registerPassenger);
 
+
+/* Users */
+//Login page
+router.get('/users/login', (req, res) => {
+    res.render('users/login') 
+});
+
+//Register page
+router.get('/users/register', (req, res) => {
+    res.render('users/register') 
+}); 
+router.post('/users/register', userController.registerUser); 
 
 // Login handle
 router.post('/users/login', (req, res, next) => {
