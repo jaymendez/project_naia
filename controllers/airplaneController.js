@@ -26,7 +26,7 @@ module.exports.create = (req, res) => {
         .then(airplane => {
             res.redirect('/home');
             // res.render('/home')
-        });
+        }).catch(err => console.log(err));
     }
 }
 

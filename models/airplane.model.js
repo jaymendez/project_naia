@@ -14,6 +14,11 @@ const Airplane = sequelize.define('airplane', {
     passenger_capacity: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        validate: {
+            isNumeric: {
+                msg: 'Needs to be numeric'
+            }
+        }   
     },
     airplane_type: {
         type: Sequelize.STRING,

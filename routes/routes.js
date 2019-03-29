@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const { ensureAuthenticated } = require('../config/auth'); 
+const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth'); 
 var airplaneController = require('../controllers/airplaneController');
 var flightController = require('../controllers/flightController');
 var luggageController = require('../controllers/luggageController');
@@ -23,9 +23,9 @@ router.get('/home', ensureAuthenticated, (req, res) => {
         user: req.user
     });
 });
-router.get('/aboutus', ensureAuthenticated, (req, res) => {
+router.get('/about', ensureAuthenticated, (req, res) => {
     var hostname = req.headers.host;
-    res.render('pages/home',{title: ''})
+    res.render('pages/about',{title: ''})
 });
 /* Airplane Routes */
 router.get('/airplane/create', ensureAuthenticated, (req, res) => {
@@ -45,7 +45,7 @@ router.get('/airplane/delete/:id', ensureAuthenticated, airplaneController.delet
 
 
 /* Flight Routes */
-router.get('/flight/create', (req, res) => {
+router.get('/flight/create', ensureAuthenticated, (req, res) => {
     res.render('flight/addOrEdit',{
         title: 'Add Flight',
         flight: ''    
@@ -77,7 +77,7 @@ router.get('/luggage/register', ensureAuthenticated, (req, res) => {
 router.get('/rfidScan', ensureAuthenticated, luggageController.updateLuggageStatus);
 router.get('/getLuggageStatus', ensureAuthenticated, luggageController.getLuggageStatus);
 router.get('/getLuggageCount', ensureAuthenticated, luggageController.getLuggageCount);
-router.post('/luggage/register', ensureAuthenticated, luggageController.registerLuggage);
+router.post('/luggage/register', luggageController.registerLuggage);
 router.get('/luggage/details', ensureAuthenticated, luggageController.viewLuggageDetails);
 
 
@@ -88,17 +88,17 @@ router.get('/passenger/register', ensureAuthenticated, (req, res) => {
         airplane:''
     });
 });
-router.post('/passenger/register', ensureAuthenticated, passengerController.registerPassenger);
+router.post('/passenger/register', passengerController.registerPassenger);
 
 
 /* Users */
 //Login page
-router.get('/users/login', (req, res) => {
+router.get('/users/login', forwardAuthenticated, (req, res) => {
     res.render('users/login') 
 });
 
 //Register page
-router.get('/users/register', (req, res) => {
+router.get('/users/register', forwardAuthenticated, (req, res) => {
     res.render('users/register') 
 }); 
 router.post('/users/register', userController.registerUser); 

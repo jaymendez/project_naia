@@ -13,7 +13,9 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "connect": "^3.6.6",
     "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.4",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "express-ejs-layouts": "^2.5.0",
@@ -25,6 +27,7 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "sequelize": "^4.42.0",
-    "sweetalert2": "^8.2.2"
+    "sweetalert2": "^8.2.2",
+    "validator": "^10.11.0"
   }
 }

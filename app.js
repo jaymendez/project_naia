@@ -9,6 +9,7 @@ const expressLayouts = require('express-ejs-layouts');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
+const cookieParser = require('cookie-parser');
 
 var app = express();
 
@@ -20,11 +21,19 @@ app.use(bodyparser.urlencoded({
     extended: true
 }))
 
+//Cookie Parser
+app.use(cookieParser());
+
 //Express Session
 app.use(session({
     secret: 'secret',
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 3600000,
+        sameSite: true,
+        secure: false
+    }
 }));
 
 //Passport middleware
