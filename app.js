@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
+const expressValidator = require('express-validator')
 
 var app = express();
 
@@ -20,6 +21,8 @@ require('./config/passport')(passport);
 app.use(bodyparser.urlencoded({
     extended: true
 }))
+
+app.use(expressValidator());
 
 //Cookie Parser
 app.use(cookieParser());

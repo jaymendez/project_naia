@@ -34,8 +34,8 @@ router.get('/airplane/create', ensureAuthenticated, (req, res) => {
         airplane: ''
     });
 });
-router.post('/airplane/create', ensureAuthenticated, airplaneController.create);
-router.get('/airplane', airplaneController.view);
+router.post('/airplane/create', airplaneController.create);
+router.get('/airplane',ensureAuthenticated, airplaneController.view);
 
 router.get('/airplane/view', ensureAuthenticated, (req, res) => {
     res.render('airplane/listAirplanes');

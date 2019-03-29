@@ -10,6 +10,11 @@ const Airplane = sequelize.define('airplane', {
     name: {
         type: Sequelize.STRING,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Field Airplane Name required'
+            }
+        }
     },
     passenger_capacity: {
         type: Sequelize.INTEGER,
@@ -17,12 +22,20 @@ const Airplane = sequelize.define('airplane', {
         validate: {
             isNumeric: {
                 msg: 'Needs to be numeric'
+            },
+            notEmpty: {
+                msg: 'Field Passenger Capacity required'
             }
-        }   
+        },
     },
     airplane_type: {
         type: Sequelize.STRING,
         allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Field Passenger Capacity required'
+            }
+        }
     }
   }, {
       validate : {

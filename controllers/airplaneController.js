@@ -8,6 +8,16 @@ const Luggage = require('../models/luggage.model');
 module.exports.test = (req, res) => {
     res.json('test form controller');
 };
+/* 
+module.exports.validate = (method) => {
+    switch (method) {
+        case 'create' : {
+            return [
+                body('passenger_capacity')
+            ]
+        }
+    }
+} */
 
 module.exports.create = (req, res) => {
     if (req.body.id) {
@@ -26,7 +36,18 @@ module.exports.create = (req, res) => {
         .then(airplane => {
             res.redirect('/home');
             // res.render('/home')
-        }).catch(err => console.log(err));
+        }).catch(err => {
+            errors = [];
+            err.errors.forEach((el,i) => {
+                console.log(el)
+                data = {};
+                data.field = el.path;
+                data.error = el.message;
+                errors.push(data)
+                console.log('-----')
+            });
+            console.log(errors)
+        });
     }
 }
 
