@@ -1,0 +1,151 @@
+<style>
+    .message, .info, .success, .warning, .error {
+		border: 1px solid;
+		margin: 10px 0px;
+		padding:15px 10px 15px 65px;
+		background-repeat: no-repeat;
+		background-position: 10px center;
+		font-size: 125%;
+	}
+	.info {
+		/* color: #00529B; */
+		border-color: #00529B;
+		background-color: #BDE5F8;
+	}
+	.success {
+		/* color: #4F8A10; */
+		border-color: #4F8A10;
+		background-color: #DFF2BF;
+	}
+	.warning {
+		/* color: #9F6000; */
+		border-color: #9F6000;
+		background-color: #FFFABF;
+	}
+	.error {
+		/* color: #D8000C; */
+		border-color: #D8000C;
+		background-color: #FFBABA;
+	}
+
+	.alert_box {
+		/*border: 1px solid;*/
+		padding:15px 10px 15px 10px;
+		background-repeat: no-repeat;
+		/* background-position: 10px center; */
+		font-size: 100%;
+	}
+    .icon_style {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        font-size: 20px;
+        color: white;
+        cursor:pointer; 
+    }
+</style>
+
+<% if (typeof errors !== 'undefined') { %>
+    <div class="row alert_box" style="display:none">
+        <div class="col s12 m12">
+            <div class="card red accent-2r">
+                <div class="row">
+                    <div class="col s6 push-s2">
+                        <div class="card-content white-text">
+                        <ul>
+                            <% errors.forEach( (err, i) => { %> 
+                                 <li><%= err.error %></li>
+                            <% }); %> RENDER
+                        </ul>
+                        </div>
+                    </div>
+                    <div class="col s1 right">
+                        <i class="fa fa-times icon_style" id="alert_close" aria-hidden="true"><i class="material-icons">close</i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (success_msg != '') { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= success_msg %> 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<% } %>
+
+<% if (error_msg != '') { %>
+
+<div class="row" id="alert_box" style="display:none">
+        <div class="col s12 m12">
+          <div class="card red darken-1">
+            <div class="row">
+              <div class="col s12 m10">
+                <div class="card-content white-text">
+                <% error_msg.forEach(el => { %>
+                    <li><%= el %></li> 
+                <% }); %>
+              </div>
+            </div>
+            <div class="col s12 m2">
+              <i class="fa fa-times icon_style" id="alert_close" aria-hidden="true"><i class="material-icons">close</i></i>
+            </div>
+          </div>
+         </div>
+        </div>
+      </div>
+<% } %>
+
+
+
+<% if (error != '') { %>
+    <div class="row" id="alert_box" style="display:none">
+        <div class="col s12 m12">
+        <div class="card red accent-2r">
+            <div class="row">
+            <div class="col s5 push-s4">
+                <div class="card-content white-text">
+                    <%= error %> 
+            </div>
+            </div>
+            <div class="col s12 m2">
+            <i class="fa fa-times icon_style" id="alert_close" aria-hidden="true"><i class="material-icons">close</i></i>
+            </div>
+        </div>
+        </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (messages) { %>
+    <div class="row" id="alert_box" style="display:block">
+        <div class="col s12 m12">
+            <div class="card red darken-1">
+            <div class="row">
+                <div class="col s12 m10">
+                <div class="card-content white-text">
+                <% messages.forEach(el => { %>
+                    <li><%= el.error %></li> 
+                <% }); %>
+                </div>
+            </div>
+            <div class="col s12 m2">
+                <i class="fa fa-times icon_style" id="alert_close" aria-hidden="true"><i class="material-icons">close</i></i>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<script>
+    $('document').ready(() => {
+        $('#alert_box').on('click',function(){
+			$( "#alert_box" ).fadeOut( "slow", function() {
+		    });
+		});
+    });
+</script> 
