@@ -31,9 +31,18 @@ const Passenger = sequelize.define('passenger', {
             unique: true,
         },
         mobile_number: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
             allowNull: false,
             unique: true,
+            validate: {
+                isNumeric: {
+                    msg: 'Mobile Number needs to be numeric'
+                },
+                len: {
+                    args: [0,12],
+                    msg: 'Mobile number max of 12 digits'
+                }  
+            },
         },
         flight_id: {
             type: Sequelize.INTEGER,
@@ -45,7 +54,11 @@ const Passenger = sequelize.define('passenger', {
         }
     }, {
     validate : {
-        
+        emptyFields() {
+            if (!this.passenger_code || !this.seat_number || !this.first_name || !this.last_name || !this.email || !this.mobile_number || !this.flight_id) {
+                throw new Error('Please fill all the fields');
+            }
+        }
     }
 });
 

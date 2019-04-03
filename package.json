@@ -30,5 +30,8 @@
     "sequelize": "^4.42.0",
     "sweetalert2": "^8.2.2",
     "validator": "^10.11.0"
+  },
+  "devDependencies": {
+    "ws": "3.3.2"
   }
 }

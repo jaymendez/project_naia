@@ -9,7 +9,18 @@ module.exports.test = (req, res) => {
 };
 
 module.exports.create = (req, res) => {
+    formValues = {};
+    formValues.flight_number = req.body.flight_number;
+    formValues.plan_starttime = req.body.plan_starttime;
+    formValues.plan_endtime = req.body.plan_endtime;
+    // formValues.airplane_id = req.body.airplane_id;
+    errors = [];
+    errs = [];
+
+    console.log(req.body)
     if (req.body.id) {
+        formValues.id = req.body.id;
+
          Airplane.update(req.body,{
              where : { 
                  id : req.body.id
@@ -18,6 +29,20 @@ module.exports.create = (req, res) => {
          .then( airplane => {
             console.log(airplane);
             res.redirect('/airplane/view')
+         })
+         .catch( err => {
+            err.errors.forEach((el,i) => {
+                data = {};
+                data.field = el.path;
+                data.error = el.message;
+                errors.push(data)
+                errs.push(el.message);
+            });
+            res.render('flight/addOrEdit', {
+                title: 'Update Flight',
+                messages: errors,
+                formValues,
+            });
          });
     }
     else {
@@ -26,12 +51,37 @@ module.exports.create = (req, res) => {
             raw: true
         })
         .then(airplane => {
-            req.body.airplane_id = airplane.id;
-            Flight.create(req.body)
-            .then(flight => {
-                res.redirect('/flight/create');
-                // res.render('/home')
-            });
+            if (airplane) {
+                req.body.airplane_id = airplane.id;
+                Flight.create(req.body)
+                .then(flight => {
+                    res.redirect('/flight/view');
+                    // res.render('/home')
+                })
+                .catch( err => {
+                    err.errors.forEach((el,i) => {
+                        data = {};
+                        data.field = el.path;
+                        data.error = el.message;
+                        errors.push(data)
+                        errs.push(el.message);
+                    });
+                    res.render('flight/addOrEdit', {
+                        title: 'Add Flight',
+                        messages: errors,
+                        formValues,
+                    });
+                });
+            } else {
+                data = {}
+                data.error = "Please pick an airplane";
+                errors.push(data);
+                res.render('flight/addOrEdit', {
+                    title: 'Add Flight',
+                    messages: errors,
+                    formValues,
+                });
+            }
         })
     }
 }

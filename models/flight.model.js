@@ -38,7 +38,11 @@ const Flight = sequelize.define('flight', {
     }
   }, {
       validate : {
-          
+        emptyFields() {
+            if (!this.flight_number || !this.plan_starttime || !this.plan_endtime || !this.airplane_id) {
+                throw new Error('Please fill all the fields');
+            }
+        }
       }
   });
 

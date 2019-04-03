@@ -11,9 +11,6 @@ const Airplane = sequelize.define('airplane', {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-            notEmpty: {
-                msg: 'Field Airplane Name required'
-            }
         }
     },
     passenger_capacity: {
@@ -21,26 +18,25 @@ const Airplane = sequelize.define('airplane', {
         allowNull: false,
         validate: {
             isNumeric: {
-                msg: 'Needs to be numeric'
+                msg: 'Passenger Capacity needs to be numeric'
             },
-            notEmpty: {
-                msg: 'Field Passenger Capacity required'
-            }
         },
     },
     airplane_type: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-            notEmpty: {
-                msg: 'Field Passenger Capacity required'
-            }
+            
         }
     }
   }, {
-      validate : {
-          
-      }
+        validate : {
+            emptyFields() {
+                if (!this.airplane_type || !this.passenger_capacity || !this.name) {
+                    throw new Error('Please fill all the fields');
+                }
+            }
+        }
   });
   
 

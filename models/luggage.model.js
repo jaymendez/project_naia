@@ -43,9 +43,13 @@ const Luggage = sequelize.define('luggage', {
         allowNull: true,
     }
   }, {
-      validate : {
-          
-      }
+    validate : {
+        emptyFields() {
+            if (!this.passenger_id || !this.flight_id || !this.rfid_uid) {
+                throw new Error('Please fill all the fields');
+            }
+        }
+    }
 });
 
 Luggage.sync({force: false}).then(() => {

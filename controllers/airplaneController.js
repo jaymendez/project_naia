@@ -20,34 +20,70 @@ module.exports.validate = (method) => {
 } */
 
 module.exports.create = (req, res) => {
-    if (req.body.id) {
-         Airplane.update(req.body,{
-             where : { 
-                 id : req.body.id
-             }
-         })
-         .then( airplane => {
-            console.log(airplane);
-            res.redirect('/airplane/view')
-         });
-    }
-    else {
-        Airplane.create(req.body)
-        .then(airplane => {
-            res.redirect('/home');
-            // res.render('/home')
-        }).catch(err => {
-            errors = [];
-            err.errors.forEach((el,i) => {
-                console.log(el)
-                data = {};
-                data.field = el.path;
-                data.error = el.message;
-                errors.push(data)
-                console.log('-----')
+    if (req.method === "POST" || req.method === "PUT") {
+        var airplane = {};
+        airplane.name = req.body.name;
+        airplane.passenger_capacity = req.body.passenger_capacity;
+        airplane.airplane_type = req.body.airplane_type;
+        errors = [];
+        errs = [];
+
+        if (req.body.id) {
+            airplane.id = req.body.id;
+            Airplane.update(req.body,{
+                where : { 
+                    id : req.body.id
+                }
+            })
+            .then( airplane => {
+                console.log(airplane);
+                res.redirect('/airplane/view');
+            })
+            .catch(err => {
+                err.errors.forEach((el,i) => {
+                    data = {};
+                    data.field = el.path;
+                    data.error = el.message;
+                    errors.push(data)
+                    errs.push(el.message);
+                });
+                res.render('airplane/addOrEdit', {
+                    title: 'Update Airplane',
+                    airplane : airplane,
+                    messages: errors,
+                });
             });
-            console.log(errors)
-        });
+        }
+        else {
+            if (req.body) {
+                Airplane.create(req.body)
+                .then(airplane => {
+                    console.log(airplane);
+                    res.redirect('/home');
+                    // res.render('/home')
+                    if (!airplane) {
+                        res.send('asd');
+                    }
+                }).catch(err => {
+                    err.errors.forEach((el,i) => {
+                        data = {};
+                        data.field = el.path;
+                        data.error = el.message;
+                        errors.push(data)
+                        errs.push(el.message);
+                    });
+                    // req.flash('error_msg', errs);
+                    // req.flash('form_values', airplane);
+                    // res.redirect('/airplane/create');
+                    res.render('airplane/addOrEdit', {
+                        title: 'Add Airplane',
+                        airplane : airplane,
+                        messages: errors,
+                    });
+                    
+                });
+            }
+        }
     }
 }
 
@@ -91,8 +127,9 @@ module.exports.update = (req,res) => {
         console.log(airplane)
         res.render('airplane/addOrEdit',{
             title: 'Update Airplane',
-            airplane : airplane
-        })
+            airplane : airplane,
+            messages : ''
+        });
     })
 }
 

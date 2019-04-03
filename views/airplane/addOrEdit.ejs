@@ -10,8 +10,18 @@
 <header>
 <% include ../layouts/sidenav %>
 </header>
+<%= form_values %>
+<% if (form_values) { %>
+    <% form_values.forEach(el => { %>
+        <%= el.name %>
 
-    
+        <script>
+            var name = "<%= el.name %>"
+            var passenger_capacity = "<%= el.passenger_capacity %>";
+            var airplane_type = "<%= el.airplane_type %>"
+        </script>
+    <% }); %>
+<% } %>
 <body class="container">
 <main>
     <div class="row container z-depth-3">
@@ -27,19 +37,34 @@
                         <input name="id" type="hidden" value="<%= airplane.id %>" id="id" />
 
                         <div class="input-field col s12">
-                            <input id="airplane_name" type="text" class="validate" name="name" value="<%= airplane.name %>">
+                            <input id="airplane_name" type="text" class="validate" name="name" 
+                                value="<%= airplane.name %>" 
+                            />
                             <label for="airplane_name">Airplane Name</label>
                         </div>
                         <div class="input-field col s12">
-                            <input id="passenger_capacity" type="text" class="validate" name="passenger_capacity" value="<%= airplane.passenger_capacity %>">
+                            <input id="passenger_capacity" type="text" class="validate" name="passenger_capacity" 
+                                value="<%= airplane.passenger_capacity %>" />
                             <label for="passenger_capacity">Passenger Capacity</label>
                         </div>
 
                         <div class="input-field col s12">
-                            <input id="select_airplanetype" type="text" class="validate" name="airplane_type" value="<%= airplane.airplane_type %>">
+                            <input id="select_airplanetype" type="text" class="validate" name="airplane_type" 
+                                value="<%= airplane.airplane_type %>"
+                            />
                             <label for="select_airplanetype">Airplane Type</label>
                         </div>
-                        <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+                        <% include ../element/messages_materialize %>
+
+                       <!--  <span id="spnError" style="color: Red; font-size: 14px;">
+                            <% if (typeof messages === 'undefined') { %>
+                                <% messages.forEach(el => { %>
+                                    <%= el.error %>* </br>
+                                <% }) %>
+                            <% } %>
+                        </span>
+ -->
+                        <button class="btn waves-effect waves-light right submit-btn" type="submit" name="action">Submit
                             <i class="material-icons right">send</i>
                         </button>
                     </form>
@@ -58,3 +83,17 @@
 
 
 </html>
+<script>
+    $('document').ready( function()  {
+        console.log(name);
+        if (name) {
+            $('#airplane_name').val(name);
+        }
+        // if (passenger_capacity) {
+        //     $('#passenger_capacity').val(passenger_capacity);
+        // }
+        // if (typeof airplane_type !== 'undefined') {
+        //     $('#select_airplanetype').val(airplane_type);
+        // }
+    })
+</script>

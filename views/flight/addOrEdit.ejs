@@ -34,31 +34,34 @@ airplane_id -->
             <div class="row" style="width: 100%">
                 <form id="create-form" action="/flight/create" method="post" class="col s12">
                     
-                    <input name="id" type="hidden" value="<%= flight.id %>" id="id" />
+                    <input name="id" type="hidden" value="<%= formValues.id %>" id="id" />
                     
                     <div class="input-field col s12">
                         <i class="material-icons prefix">account_circle</i>
-                        <input id="flight_number" type="text" class="validate" name="flight_number" value="<%= flight.flight_number %>">
+                        <input id="flight_number" type="text" class="validate" name="flight_number" value="<%= formValues.flight_number %>" required>
                         <label for="flight_number">Flight Number</label>
                         
                     </div>
                     <div class="input-field col s6">
                         
                         <i class="material-icons prefix">date_range</i>
-                        <input id="plan_starttime" type="text" class="datepicker" name="plan_starttime" value="<%= flight.plan_starttime %>">
+                        <input id="plan_starttime" type="text" class="datepicker" name="plan_starttime" value="<%= formValues.plan_starttime %>" required>
                         <label for="plan_starttime">Start Time</label>
                     </div> 
                     <div class="input-field col s6">
                         <i class="material-icons prefix">date_range</i>
-                        <input id="plan_endtime" type="text" class="datepicker" name="plan_endtime" value="<%= flight.plan_endtime %>">
+                        <input id="plan_endtime" type="text" class="datepicker" name="plan_endtime" value="<%= formValues.plan_endtime %>" required>
                         <label for="plan_endtime">End Time</label>
                     </div>
 
                     <div class="input-field col s12">
-                        <input id="select_airplane" type="text" class="validate" name="airplane_id" value="<%= flight.airplane_id %>" style="width: 90%" readonly>
+                        <input id="select_airplane" type="text" class="validate" name="airplane_id" value="<%= formValues.airplane_id %>" style="width: 90%" readonly required>
                         <label for="select_airplane">Airplane</label>
                         <a class="waves-effect waves-teal btn-flat modal-trigger assign-airplane-btn" href="#modal1"><i class="material-icons left" style="font-size: 2rem">assignment</i></a>
                     </div>
+
+                    <% include ../element/messages_materialize %>
+
                     <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
                         <i class="material-icons right">send</i>
                     </button>

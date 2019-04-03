@@ -18,12 +18,17 @@
                             <form action="/luggage/register" method="post" class="col s12">
                             
                                 <div class="input-field col s12">
-                                    <input id="passenger_code" type="text" class="validate" name="passenger_code">
+                                    <input id="passenger_code" type="text" class="validate" name="passenger_code" value="<%= formValues.passenger_code %>" required>
                                     <label for="passenger_code">Passenger Code</label>
                                 </div>
-                                
+<!-- 
                                 <div class="input-field col s12">
-                                    <input id="flight_number" type="text" class="validate" name="flight_number">
+                                    <input id="seat_number" type="text" class="validate" name="seat_number" value="<%= formValues.seat_number %>">
+                                    <label for="seat_number">Seat Number</label>
+                                </div>
+                                 -->
+                                <div class="input-field col s12">
+                                    <input id="flight_number" type="text" class="validate" name="flight_number" value="<%= formValues.flight_number %>" required>
                                     <label for="flight_number">Flight Number</label>
                                 </div>
                                 <!-- <div class="input-field col s12" id="select_flight">
@@ -37,9 +42,10 @@
                                 </div> -->
 
                                 <div class="input-field col s12">
-                                    <input id="rfid_uid" type="text" class="validate" name="rfid_uid">
+                                    <input id="rfid_uid" type="text" class="validate" name="rfid_uid" value="<%= formValues.rfid_uid %>" required>
                                     <label for="rfid_uid">RFID</label>
                                 </div>
+                                <% include ../element/messages_materialize %>
                                 
                                 <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
                                     <i class="material-icons right">send</i>

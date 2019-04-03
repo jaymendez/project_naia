@@ -30,8 +30,9 @@ router.get('/about', ensureAuthenticated, (req, res) => {
 /* Airplane Routes */
 router.get('/airplane/create', ensureAuthenticated, (req, res) => {
     res.render('airplane/addOrEdit',{
-        title: 'Add Airplane',
-        airplane: ''
+        title: 'Add Airplanes',
+        airplane: '',
+        messages: ''
     });
 });
 router.post('/airplane/create', airplaneController.create);
@@ -41,6 +42,13 @@ router.get('/airplane/view', ensureAuthenticated, (req, res) => {
     res.render('airplane/listAirplanes');
 });
 router.get('/airplane/create/:id', ensureAuthenticated, airplaneController.update);
+router.get('/airplane/create/:id', ensureAuthenticated, (req, res) => {
+    res.render('airplane/addOrEdit',{
+        title: 'Add Airplanes',
+        airplane: '',
+        messages : '',
+    });
+});
 router.get('/airplane/delete/:id', ensureAuthenticated, airplaneController.delete);
 
 
@@ -48,11 +56,12 @@ router.get('/airplane/delete/:id', ensureAuthenticated, airplaneController.delet
 router.get('/flight/create', ensureAuthenticated, (req, res) => {
     res.render('flight/addOrEdit',{
         title: 'Add Flight',
-        flight: ''    
+        formValues: '',
+        messages: '',
     })
 });
 // router.get('/flight/create', flightController.getAvailableAirplane);
-router.post('/flight/create', ensureAuthenticated, flightController.create);
+router.post('/flight/create', flightController.create);
 router.get('/flight/getAvailableAirplane', ensureAuthenticated, flightController.getAvailableAirplane);
 router.get('/flight', ensureAuthenticated, flightController.view);
 router.get('/flight/view', ensureAuthenticated, (req, res) => {
@@ -70,7 +79,8 @@ router.get('/dashboard/:id', ensureAuthenticated, luggageController.viewDashboar
 /* LUGGAGE */
 router.get('/luggage/register', ensureAuthenticated, (req, res) => {
     res.render('luggage/createLuggage',{
-
+        formValues: '',
+        messages : ''
     });
 });
 
@@ -85,7 +95,8 @@ router.get('/luggage/details', ensureAuthenticated, luggageController.viewLuggag
 router.get('/passenger/register', ensureAuthenticated, (req, res) => {
     res.render('passenger/createPassenger',{
         title:'Register Passenger',
-        airplane:''
+        formValues: '',
+        messages : ''
     });
 });
 router.post('/passenger/register', passengerController.registerPassenger);

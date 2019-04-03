@@ -10,6 +10,13 @@ const Luggage = require('../models/luggage.model');
 moment.tz.setDefault("Asia/Manila");
 module.exports.registerLuggage = (req, res) => {
     console.log(req.body);
+    formValues = {};
+    formValues.passenger_code = req.body.passenger_code;
+    formValues.flight_number = req.body.flight_number;
+    formValues.rfid_uid = req.body.rfid_uid;
+    errors = [];
+    errs = [];
+
     if (req.body.id) {
         Luggage.update(req.body,{
              where : { 
@@ -41,9 +48,43 @@ module.exports.registerLuggage = (req, res) => {
                     res.redirect('/home');
                     console.log(luggage);
                     // res.render('/home')
+                })
+                .catch( err => {
+                    err.errors.forEach((el,i) => {
+                        data = {};
+                        data.field = el.path;
+                        data.error = el.message;
+                        errors.push(data)
+                        errs.push(el.message);
+                    });
+                    res.render('luggage/createLuggage', {
+                        messages : errors,
+                        formValues : formValues,
+                    });
+                });
+            } else {
+                data = {}
+                // data.error = "Seat number doesn't exist";
+                data.error = "Passenger number doesn't exist";
+                errors.push(data);
+                res.render('luggage/createLuggage', {
+                    messages : errors,
+                    formValues : formValues,
                 });
             }
         }).catch((err) => {
+            console.log(err);
+            err.errors.forEach((el,i) => {
+                data = {};
+                data.field = el.path;
+                data.error = el.message;
+                errors.push(data)
+                errs.push(el.message);
+            });
+            res.render('luggage/createLuggage', {
+                messages : errors,
+                formValues : formValues,
+            });
             console.error("Passenger Query Error: ", err);
         });
 
