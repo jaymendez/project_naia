@@ -10,6 +10,8 @@
     
     <body class="container">
         <main>
+            <% include ../element/viewLuggageDetails %>
+
             <div class="" style="margin-left: 10%">
 
                 <a href="/flight/create" class="waves-effect waves-light btn"><i class="material-icons left">add_box</i>Add Flight</a>
@@ -51,7 +53,9 @@
  $(document).ready(() => {
         // let table = $('#table').DataTable();
         populateTable();
-    });
+
+    
+});
 
     function populateTable() {
         $.getJSON("/flight",(data) => {
@@ -72,7 +76,8 @@
                         render: function(data, type, row, meta) {
                             if (!data) return "";
                             else {
-                                return '<center><a href="/dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
+                                return '<center><a href="#modal2" id="viewDetails" data-flightId="'+data+'" data-flight_number="'+row.flight_number+'" class="modal-trigger viewDetails"><i class="material-icons">search</i></a>&nbsp;' +
+                                '<a href="/dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
                             }
                         }
                     },
@@ -80,11 +85,52 @@
                 "columnDefs": [ {
                     "targets": 7,
                     "data" : "id",
-                    "render": function ( data, type, row ) 
+                    "render": function (data, type, row) 
                     {
                         return '<center><a href="dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
                     }
-                }]
+                }],
+                "initComplete": function(settings, json) {
+                    dataTable = $('.luggageDetailsTable').DataTable({})
+                    $('.modal').modal();
+
+                    $('.viewDetails').on('click', function() {
+                        const flight_id = $(this).data('flightid');
+                        const flight_num = $(this).data('flight_number');
+                        $('.luggageDetailsBody').html('');
+                        $.get("/luggage/details",{
+                            flight_id : flight_id
+                        }).done( (json) => {
+                            console.log(json);
+                            dataTable.destroy();
+                            dataTable = $('.luggageDetailsTable').DataTable({
+                                data: json.data,
+                                dom: 'Bfrtip',
+                                buttons: [
+                                    {
+                                        autoPrint: false,
+                                        extend: 'print',
+                                        title: '',
+                                        messageTop: 'Luggage Logs:',
+                                        customize: function (win) {
+                                            $(win.document.body)
+                                            .prepend('<center><h5>Luggage Report Summary for: <strong></br>'+ flight_num +'</strong></h5></center>'+
+                                                    'Date:' +  '</br> '+
+                                                    'Total Arrived:' + ' </br>' +
+                                                    'Total Delayed:' + ' </br>'   
+                                            );
+                                        }
+                                    }
+                                ],
+                                columns: [
+                                    { data: 'name'},
+                                    { data: 'arrival_time'},
+                                    { data: 'departure_time'},
+                                ]
+                            }) // ===== END OF DATATABLES
+                        })
+                    });
+                }
             })
 
             $('#trySubmit').on('click',()=>{

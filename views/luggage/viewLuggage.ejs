@@ -22,8 +22,9 @@
     <body class="container">
         <% include ../element/viewLuggageDetails %>
         <main>
-            <div class="" style="margin-left: 10%">
-                <a href="/flight/create" class="waves-effect waves-light btn"><i class="material-icons left">add_box</i>Add Flight</a>
+            <div class="" style="margin-left: 0%">
+                <a href="/flight/view" id="back" class="waves-effect waves-light btn modal-trigger"><i class="material-icons left">arrow_back</i>GO BACK</a>
+
                 <a href="#modal2" id="viewDetails" data-flightId="<%= resultData.flight_id %>" data-flight_number="<%= resultData.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a>
                 <table id="table" class="display centered highlight" width="100%">
                     <thead>
@@ -87,6 +88,10 @@
   // Initialize Firebase
   // TODO: Replace with your project's customized code snippet
   $(document).ready(() => {
+    $('.sidenav').removeClass('sidenav-fixed');
+    $('.sidenav').sidenav();
+    $('.sidenav').sidenav('close');
+ 
     getLuggageStatus("<%- resultData.flight_id %>");
     getLuggageCount("<%- resultData.flight_id %>");
     var seconds = 60;
@@ -102,7 +107,7 @@
         if (seconds <= 0)
             seconds = 60;
     }, 1000);
-
+    
     dataTable = $('.luggageDetailsTable').DataTable({})
     $('.modal').modal();
 
@@ -165,6 +170,7 @@
             }) // ===== END OF DATATABLES
         })
     }); 
+      
 });
 
 function scanRfid(rfid_uid) {
