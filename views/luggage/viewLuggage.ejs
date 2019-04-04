@@ -101,8 +101,8 @@
         // $("#circleBorder").html(seconds);
         // $("#currDateTime").html("As of " + moment().format('MMMM D YYYY, h:mm a'));
         if (seconds == 0) {
+            getPickedUp("<%- resultData.flight_id %>");
             getLuggageStatus("<%- resultData.flight_id %>");
-            
         }
         if (seconds <= 0)
             seconds = 60;
@@ -214,5 +214,14 @@ function getLuggageCount(flight_id) {
             seatClass.data('totalLuggage', el.luggage_count);
         });
     })
+}
+
+function getPickedUp(flight_id) {
+    $.get('/luggage/getPickedUp', {
+        flightId : flight_id
+    })
+    .then( json => {
+        getLuggageStatus(flight_id);
+    });
 }
 </script> 

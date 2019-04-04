@@ -138,9 +138,49 @@ module.exports.getLuggageStatus = (req, res) => {
 
 }
 
+module.exports.getPickedUp = (req, res) => {
+    /*  
+        Mag papasa tayo dito syempre ng Flight number,
+        Ito yung script na mag rurun para mang recognize if yung luggage ay kinuha na or na pick up na.
+    */
+    const flightId = req.query.flightId;
+    Luggage.findAll({
+        where: {flight_id : flightId},
+        raw: true,
+        include: [Passenger]
+    }).then( luggage => {
+        resultData = [];
+        // console.log(luggage);
+        var defaultVal = '1111-11-11 11:11:11';
+        luggage.forEach((el, i) => {
+            data = {}
+            req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
+
+            arrival_time = el.arrival_time;
+            departure_time = el.departure_time;
+            if (arrival_time !=  defaultVal && departure_time === defaultVal) {
+                //arrived
+                data.seat_number = el['passenger.seat_number'];
+                data.status = 'arrived';
+                Luggage.update(req.body,{
+                    where : { 
+                        id : el.id, 
+                    }
+                })
+                .then( data => {
+                    /* res.json({
+                        result : data
+                    }); */
+                });
+            }
+        })
+    });
+
+}
+
 module.exports.updateLuggageStatus = (req, res) => {
     /* 
-        Dito papasok if na tatap yung luggage sa carousel. 
+        Dito papasok if na tatap yung luggage sa  carousel. 
     */
     //Receives RFID
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -152,31 +192,49 @@ module.exports.updateLuggageStatus = (req, res) => {
         include : Passenger
     }).then( luggage => {
         // console.log(luggage);
-        seat_number = luggage['passenger.seat_number'];
-        // arrival_time = moment(new Date(luggage.arrival_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
-        // departure_time = moment(new Date(luggage.departure_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
-        arrival_time = luggage.arrival_time; 
-        departure_time = luggage.departure_time; 
-        req.body.arrival_time = moment().format('YYYY-MM-DD HH:mm:ss');
-        
-        if (arrival_time === '1111-11-11 11:11:11') {
-            //no time in
-            Luggage.update(req.body,{
-                where : { 
-                    id : luggage.id
-                }
-            })
-            .then( data => {
-                console.log(data);
-                res.json({
-                    seat_number : seat_number,
+        if (luggage) {
+            seat_number = luggage['passenger.seat_number'];
+            // arrival_time = moment(new Date(luggage.arrival_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
+            // departure_time = moment(new Date(luggage.departure_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
+            console.log(luggage.departure_time);
+            arrival_time = luggage.arrival_time; 
+            departure_time = luggage.departure_time; 
+            
+            if (arrival_time === '1111-11-11 11:11:11') {
+                luggage.arrival_time = moment().format('YYYY-MM-DD HH:mm:ss');
+                luggage.departure_time = moment('1111-11-11 11:11:11');
+                
+                //no time in
+                Luggage.update(luggage,{
+                    where : { 
+                        id : luggage.id
+                    }
+                })
+                .then( data => {
+                    console.log(data);
+                    res.json({
+                        seat_number : seat_number,
+                    });
                 });
-            });
-        } else {
-            //do nothing as of now.
+            } else if (arrival_time !== '1111-11-11 11:11:11' && departure_time !== '1111-11-11 11:11:11') {
+                // console.log(luggage);
+                luggage.departure_time = moment('1111-11-11 11:11:11');
+                // req.body.departure_time = moment('1111-11-11 11:11:11');
+
+                // console.log(luggage);
+                Luggage.update(luggage,{
+                    where : { 
+                        id : luggage.id
+                    }
+                })
+                .then( data => {
+                    console.log(data);
+                    res.json({
+                        seat_number : seat_number,
+                    });
+                });
+            }
         }
-        
-        
     });
 }
 

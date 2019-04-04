@@ -44,11 +44,11 @@ const Luggage = sequelize.define('luggage', {
     }
   }, {
     validate : {
-        emptyFields() {
-            if (!this.passenger_id || !this.flight_id || !this.rfid_uid) {
-                throw new Error('Please fill all the fields');
-            }
-        }
+        // emptyFields() {
+        //     if (!this.passenger_id || !this.flight_id || !this.rfid_uid) {
+        //         throw new Error('Please fill all the fields');
+        //     }
+        // }
     }
 });
 

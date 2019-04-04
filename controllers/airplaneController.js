@@ -108,7 +108,6 @@ module.exports.view = async (req,res) => {
     let data = await Airplane.findAll({
         // limit: 10,
         raw: true,
-        include: Flight
     }).catch( err => {
         console.error("Error: ", err);
     }).then( airplane => {

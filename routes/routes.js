@@ -51,7 +51,6 @@ router.get('/airplane/create/:id', ensureAuthenticated, (req, res) => {
 });
 router.get('/airplane/delete/:id', ensureAuthenticated, airplaneController.delete);
 
-
 /* Flight Routes */
 router.get('/flight/create', ensureAuthenticated, (req, res) => {
     res.render('flight/addOrEdit',{
@@ -67,6 +66,8 @@ router.get('/flight', ensureAuthenticated, flightController.view);
 router.get('/flight/view', ensureAuthenticated, (req, res) => {
     res.render('flight/listFlights');
 });
+router.post('/flight/simulateFlight', flightController.simulateFlight);
+
 // router.get('/flight', flightController.view);
 
 
@@ -89,6 +90,8 @@ router.get('/getLuggageStatus', ensureAuthenticated, luggageController.getLuggag
 router.get('/getLuggageCount', ensureAuthenticated, luggageController.getLuggageCount);
 router.post('/luggage/register', luggageController.registerLuggage);
 router.get('/luggage/details', ensureAuthenticated, luggageController.viewLuggageDetails);
+router.get('/luggage/getPickedUp', luggageController.getPickedUp);
+
 
 
 /* Passenger */

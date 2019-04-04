@@ -76,8 +76,9 @@
                         render: function(data, type, row, meta) {
                             if (!data) return "";
                             else {
-                                return '<center><a href="#modal2" id="viewDetails" data-flightId="'+data+'" data-flight_number="'+row.flight_number+'" class="modal-trigger viewDetails"><i class="material-icons">search</i></a>&nbsp;' +
-                                '<a href="/dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
+                                return '<center><a href="#" title="Simulate Flight" data-flightId="'+data+'" data-flight_number="'+row.flight_number+'" class="simulateFlight"><i class="material-icons tooltipped">flight_takeoff</i></a>&nbsp;' +
+                                '<a href="#modal2" id="viewDetails" title="View Luggage Logs" data-flightId="'+data+'" data-flight_number="'+ row.flight_number+'" class="modal-trigger viewDetails"><i class="material-icons">search</i></a>&nbsp;' +
+                                '<a href="/dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" title="View Luggage Dashboard"  data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
                             }
                         }
                     },
@@ -93,6 +94,7 @@
                 "initComplete": function(settings, json) {
                     dataTable = $('.luggageDetailsTable').DataTable({})
                     $('.modal').modal();
+                    $( document ).tooltip();
 
                     $('.viewDetails').on('click', function() {
                         const flight_id = $(this).data('flightid');
@@ -129,6 +131,17 @@
                                 ]
                             }) // ===== END OF DATATABLES
                         })
+                    });
+
+                    $('.simulateFlight').on('click', function() {
+                        const flight_id = $(this).data('flightid');
+                        $.post('/flight/simulateFlight', {
+                            flight_id : flight_id
+                        }, function(json) {
+                            if (json.result) {
+                                location.reload();
+                            }
+                        });
                     });
                 }
             })

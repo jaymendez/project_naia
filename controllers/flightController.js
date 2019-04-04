@@ -21,7 +21,7 @@ module.exports.create = (req, res) => {
     if (req.body.id) {
         formValues.id = req.body.id;
 
-         Airplane.update(req.body,{
+         Flight.update(req.body,{
              where : { 
                  id : req.body.id
              }
@@ -174,4 +174,28 @@ module.exports.getAvailableAirplane = (req, res) => {
 
 module.exports.getLuggageStatus = (req, res) => {
 
+}
+
+module.exports.simulateFlight = (req, res) => {
+
+    Flight.findOne({
+        where: { id : req.body.flight_id },
+        raw: true,
+    })
+    .done(flight => {
+        req.body.flight_number = flight.flight_number;
+        req.body.plan_starttime = moment(flight.plan_starttime);
+        flight.departure_time = moment(req.body.plan_starttime).add(15, 'minutes');
+        req.body.plan_endtime = moment(flight.plan_endtime).format('YYYY-MM-DD HH:mm:ss');;
+        flight.arrival_time = moment(req.body.plan_endtime).add(-3,'hours').format('YYYY-MM-DD HH:mm:ss');
+        req.body.airplane_id = flight.airplane_id;
+
+        Flight.update(flight, {
+            where: { id : req.body.flight_id }
+        })
+        .then( updateVal => {
+            console.log(updateVal);
+            res.json({result: updateVal})
+        })
+    })
 }
