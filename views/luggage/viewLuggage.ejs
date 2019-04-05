@@ -9,6 +9,27 @@
         background-repeat: no-repeat;
         height: 200px;
     }
+    .yearTable {
+    position:relative;
+    }
+    .yearTable td {
+        border:1px solid #CCCCCC;
+        /* width:45px; */
+        /* height:45px; */
+        text-align:center;
+        vertical-align:middle;
+        position:relative;
+    }
+    .subscript {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 10;
+        text-align:right;
+        vertical-align:bottom;
+        font-size: 26px;
+        color:whitesmoke;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -26,7 +47,7 @@
                 <a href="/flight/view" id="back" class="waves-effect waves-light btn modal-trigger"><i class="material-icons left">arrow_back</i>GO BACK</a>
 
                 <a href="#modal2" id="viewDetails" data-flightId="<%= resultData.flight_id %>" data-flight_number="<%= resultData.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a>
-                <table id="table" class="display centered highlight" width="100%">
+                <table id="table" class="display centered highlight yearTable" width="100%">
                     <thead>
                         <tr class=>
                             <th width="25%">A</th>
@@ -46,23 +67,23 @@
                                     
                                     <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span></td>
                                     <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span></td>
-                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span></td>
+                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">100</span></td>
                                     <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span></td>
                                 </tr>
                             <% }
                         } else if (count % 4 == 2) {
                             for (i=0; i < Math.floor(row); i++) { %>
                                 <tr>
-                                    <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span></td>
-                                    <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span></td>
-                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span></td>
-                                    <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span></td>
+                                    <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span><span class="subscript">0</span></td>
                                 </tr>
                         <%  } %>
                             <tr>
                                 <td></td>
-                                <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span></td>
-                                <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span></td>
+                                <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
+                                <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
                                 <td></td>
                             </tr>
                     <%  } %>
@@ -103,6 +124,7 @@
         if (seconds == 0) {
             getPickedUp("<%- resultData.flight_id %>");
             getLuggageStatus("<%- resultData.flight_id %>");
+            getLuggageCount("<%- resultData.flight_id %>");
         }
         if (seconds <= 0)
             seconds = 60;
@@ -212,6 +234,7 @@ function getLuggageCount(flight_id) {
         json.resultData.forEach((el, i) => {
             var seatClass = $('#seat-'+el.seat_number);
             seatClass.data('totalLuggage', el.luggage_count);
+            seatClass.children('span.subscript').html(el.luggage_count);
         });
     })
 }

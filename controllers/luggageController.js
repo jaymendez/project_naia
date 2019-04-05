@@ -343,6 +343,7 @@ module.exports.getLuggageCount = (req, res) => {
     }).then( luggage => {
         resultData = [];
         arr = [];
+        var defaultVal = '1111-11-11 11:11:11';            
          
         luggage.forEach((el, i) => {
             passenger = el['passenger.passenger_code']
@@ -352,6 +353,13 @@ module.exports.getLuggageCount = (req, res) => {
             resultData[passenger]['luggage'].push(el.rfid_uid)            // result
             resultData[passenger]['luggage_count'] = resultData[passenger]['luggage'].length || [];
             
+            // resultData[passenger]['luggage_count'] = resultData[passenger]['luggage'].length;
+        });
+        luggage.forEach((el, i) => {
+            passenger = el['passenger.passenger_code']
+            if (el.arrival_time !== defaultVal) {
+                resultData[passenger]['luggage_count']--;
+            }
             // resultData[passenger]['luggage_count'] = resultData[passenger]['luggage'].length;
         });
         for (var key in resultData) {
