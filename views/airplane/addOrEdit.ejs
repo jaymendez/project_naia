@@ -48,13 +48,24 @@
                             <label for="passenger_capacity">Passenger Capacity</label>
                         </div>
                         
-
+<!-- 
                         <div class="input-field col s12">
                             <input id="select_airplanetype" type="text" class="validate" name="airplane_type" 
                                 value="<%= airplane.airplane_type %>"
                             />
                             <label for="select_airplanetype">Airplane Type</label>
                         </div>
+                         -->
+                        <div class="input-field col s12">
+                            <select name="airplane_type">
+                              <option value="" disabled selected>Choose airplane type</option>
+                              <option value="Airbus 6S">AIRBUS 6S</option>
+                              <option value="Airbus 9S">AIRBUS 9S</option>
+                            </select>
+                            <label>Airplane Type</label>
+                        </div>
+                        
+
                         <% include ../element/messages_materialize %>
 
                        <!--  <span id="spnError" style="color: Red; font-size: 14px;">
@@ -90,6 +101,10 @@
         if (name) {
             $('#airplane_name').val(name);
         }
+
+        $(document).ready(function(){
+            $('select').formSelect();
+        });
         // if (passenger_capacity) {
         //     $('#passenger_capacity').val(passenger_capacity);
         // }

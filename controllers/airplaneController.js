@@ -59,11 +59,8 @@ module.exports.create = (req, res) => {
                 Airplane.create(req.body)
                 .then(airplane => {
                     console.log(airplane);
-                    res.redirect('/home');
+                    res.redirect('/airplane/view');
                     // res.render('/home')
-                    if (!airplane) {
-                        res.send('asd');
-                    }
                 }).catch(err => {
                     err.errors.forEach((el,i) => {
                         data = {};

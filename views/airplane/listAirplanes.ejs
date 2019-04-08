@@ -71,7 +71,33 @@
                         return '<a href="create/'+data+'" class="update" id="update-btn" data-id="'+data+'"><i class="material-icons">create</i></a> ' +
                                '<a href="#" onclick="deleteAirplane('+data+')" class="delete-btn" id="delete-btn" data-id="'+data+'" style="padding-left: 5px"><i class="material-icons">delete</i></a>';
                     }
-                }]
+                }],
+                "initComplete" : function(settings, json) {
+                    deleteAirplane = (id) => {
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            $.get("delete/"+id,function(data) {
+                                // console.log(data);
+                            });
+                            if (result.value) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                )
+                                table.destroy();
+                                populateTable();
+                            }
+                        })
+                    }
+                }
             })
 
             $('#trySubmit').on('click',()=>{
@@ -80,7 +106,7 @@
         })
     }
 
-    deleteAirplane = (id) => {
+    /* deleteAirplane = (id) => {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -95,13 +121,14 @@
             });
             if (result.value) {
                 Swal.fire(
-                'Deleted!',
-                'Your file has been deleted.',
-                'success'
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
                 )
                 table.destroy();
                 populateTable();
             }
         })
-    }
+    } */
+    
 </script>

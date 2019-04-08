@@ -30,6 +30,11 @@
         font-size: 26px;
         color:whitesmoke;
     }
+    .table-container {
+        width: 90%;
+        margin: 0 auto;
+    }
+    
 </style>
 
 <!DOCTYPE html>
@@ -40,60 +45,157 @@
 <header>
 <% include ../layouts/sidenav %>
 </header>
-    <body class="container">
+    <body class="" >
         <% include ../element/viewLuggageDetails %>
+        <% 
+            const count = resultData.passenger_capacity;
+            const airplane_type = resultData.airplane_type; 
+        %>
         <main>
-            <div class="" style="margin-left: 0%">
+            <div class="table-container" style="">
                 <a href="/flight/view" id="back" class="waves-effect waves-light btn modal-trigger"><i class="material-icons left">arrow_back</i>GO BACK</a>
 
                 <a href="#modal2" id="viewDetails" data-flightId="<%= resultData.flight_id %>" data-flight_number="<%= resultData.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a>
                 <table id="table" class="display centered highlight yearTable" width="100%">
                     <thead>
-                        <tr class=>
-                            <th width="25%">A</th>
-                            <th width="25%">B</th>
-                            <th width="25%">C</th>
-                            <th width="25%">D</th>
+                        <tr class>
+                            <% if (airplane_type === "Airbus 6S") { %>
+                                <th width="16%">A</th>
+                                <th width="16%">B</th>
+                                <th width="16%">C</th>
+                                <th width="16%">D</th>
+                                <th width="16%">E</th>
+                                <th width="16%">F</th>
+                            <% } else if (airplane_type === "Airbus 9S") { %>
+                                <th width="11%">A</th>
+                                <th width="11%">B</th>
+                                <th width="11%">C</th>
+                                <th width="11%">D</th>
+                                <th width="11%">E</th>
+                                <th width="11%">F</th>
+                                <th width="11%">G</th>
+                                <th width="11%">H</th>
+                                <th width="11%">I</th>
+                            
+                            <% } %>
                         </tr>
                     </thead>
                     <tbody class="table-body">
                         <%
-                        const count = resultData.passenger_capacity;
-                        const row = count/4;
-                        if (count % 4 == 0) {
+                        
+                        
+
+                        <!-- NEW SHIT -->
+                        if (airplane_type === "Airbus 6S") { 
+                            const row = count/6; 
                             for (i=0; i < row; i++) { %>
                                 <tr>
                                     <!-- <td background="/public/images/bag.png">seat-<%= i+1 %>A</td> -->
                                     
-                                    <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span></td>
-                                    <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span></td>
-                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">100</span></td>
-                                    <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span></td>
-                                </tr>
-                            <% }
-                        } else if (count % 4 == 2) {
-                            for (i=0; i < Math.floor(row); i++) { %>
-                                <tr>
                                     <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span><span class="subscript">0</span></td>
                                     <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
                                     <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
                                     <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>E" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>E</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>F" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>F</span><span class="subscript">0</span></td>
                                 </tr>
-                        <%  } %>
-                            <tr>
-                                <td></td>
-                                <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
-                                <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
-                                <td></td>
-                            </tr>
-                    <%  } %>
+                        <%  }
+                        } else if (airplane_type === "Airbus 9S") {
+                            const row = count/9; 
+                            for (i=0; i < row; i++) { %>
+                                <tr>
+                                    <!-- <td background="/public/images/bag.png">seat-<%= i+1 %>A</td> -->
+                                    
+                                    <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>E" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>E</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>F" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>F</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>G" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>G</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>H" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>H</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>I" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>I</span><span class="subscript">0</span></td>
+                                </tr>
+                        <%  }
+                        } else { 
+                            <!-- OLD SHIT -->
+                            const row = count/4;
+                            if (count % 4 == 0) {
+                                for (i=0; i < row; i++) { %>
+                                    <tr>
+                                        <!-- <td background="/public/images/bag.png">seat-<%= i+1 %>A</td> -->
+                                        
+                                        <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span><span class="subscript">0</span></td>
+                                        <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
+                                        <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
+                                        <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span><span class="subscript">0</span></td>
+                                    </tr>
+                                <% }
+                            } else if (count % 4 == 2) {
+                                for (i=0; i < Math.floor(row); i++) { %>
+                                    <tr>
+                                        <td id="seat-<%= i+1 %>A" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>A</span><span class="subscript">0</span></td>
+                                        <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
+                                        <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
+                                        <td id="seat-<%= i+1 %>D" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>D</span><span class="subscript">0</span></td>
+                                    </tr>
+                            <%  } %>
+                                <tr>
+                                    <td></td>
+                                    <td id="seat-<%= i+1 %>B" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>B</span><span class="subscript">0</span></td>
+                                    <td id="seat-<%= i+1 %>C" class="luggage td-bg" background="/public/images/bag.png"><span style="color:whitesmoke; font-size: 32px"><%= i+1 %>C</span><span class="subscript">0</span></td>
+                                    <td></td>
+                                </tr>
+                        <%  } 
+                        }   %>
+
+
                     </tbody>
                 </table>
+                <div class="legend">
+                    <ul>
+                        <div class="row">
+                            <div class="col s3 center-align">
+                                <li>
+                                    <h3>
+                                        Arrived
+                                        <!-- <div style="width:90px; height:40px; background-color:#f44336; display:inline-block"></div> -->
+                                        &nbsp;&nbsp;  <i class="Medium material-icons" style="color:rgb(96, 226, 96)">work</i>
+                                    </h3> 
+                                </li>
+                            </div>
+                            <div class="col s3 center-align">
+                                <li>
+                                    <h3>Picked Up
+                                        <!-- <div style="width:60px; height:40px; background-color:#5498ff; display:inline-block"></div> -->
+                                        &nbsp;&nbsp;<i class="Medium material-icons" style="color:#5498ff">work</i>
+                                    </h3> 
+                                </li>
+                            </div>
+                            <div class="col s3 center-align">
+                                <li>
+                                    <h3>Delayed
+                                        <!-- <div style="width:60px; height:40px; background-color:#f44336; display:inline-block"></div> -->
+                                        &nbsp;&nbsp;<i class="Medium material-icons" style="color:#f44336">work</i>
+                                    </h3> 
+                                </li>
+                            </div>
+                            <div class="col s3 center-align">
+                                <li>
+                                    <h3>
+                                        Unoccupied
+                                        <!-- <div style="width:90px; height:40px; background-color:#f44336; display:inline-block"></div> -->
+                                        &nbsp;&nbsp;  <i class="Medium material-icons" style="color:rgba(94, 94, 95, 0.59)">work</i>
+                                    </h3> 
+                                </li>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
             </div>
 
         </main>
     
-
 
 
 
@@ -217,10 +319,10 @@ function getLuggageStatus(flight_id) {
         json.resultData.forEach((el, i) => {
             if (el.status === 'arrived') {
                 $('#seat-'+el.seat_number).css('background-color','rgb(96, 226, 96)');
-            } else if (el.status === 'pickedUp') {
-                $('#seat-'+el.seat_number).css('background-color','#5498ff');
             } else if (el.status === 'delayed') {
                 $('#seat-'+el.seat_number).css('background-color','#f44336');
+            } else if (el.status === 'pickedUp') {
+                $('#seat-'+el.seat_number).css('background-color','#5498ff');
             }
         });
     });
