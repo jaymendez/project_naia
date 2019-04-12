@@ -6,9 +6,13 @@
 <header>
 <% include ../layouts/sidenav %>
 </header>
-
-    
-    <body class="container">
+<style>
+    .table-container {
+        width: 80%;
+        margin: 0 auto;
+    }
+</style>
+    <body class="table-container">
         <main>
             <% include ../element/viewLuggageDetails %>
 
@@ -19,6 +23,7 @@
                     <thead>
     
                         <tr>
+                            <th>ID</th>
                             <th>Flight Number</th>
                             <th>Plan Start Time</th>
                             <th>Plan End Time</th>
@@ -64,6 +69,7 @@
             table = $('#table').DataTable({
                 data : data,
                 columns: [
+                    { data: "id"},
                     { data: "flight_number" }, 
                     { data: "starttime" },
                     { data: "endtime" },
@@ -84,7 +90,7 @@
                     },
                 ],
                 "columnDefs": [ {
-                    "targets": 7,
+                    "targets": 8,
                     "data" : "id",
                     "render": function (data, type, row) 
                     {

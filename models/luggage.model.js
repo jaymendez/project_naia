@@ -41,6 +41,11 @@ const Luggage = sequelize.define('luggage', {
     weight: {
         type: Sequelize.INTEGER,
         allowNull: true,
+    },
+    isDelayed: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: 0
     }
   }, {
     validate : {

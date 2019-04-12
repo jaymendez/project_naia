@@ -111,13 +111,17 @@ module.exports.getLuggageStatus = (req, res) => {
             
             arrival_time = el.arrival_time;
             departure_time = el.departure_time;
+            isDelayed = el.isDelayed;
             if (arrival_time !=  defaultVal && departure_time === defaultVal) {
                 //arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'arrived';
+            } else if ((arrival_time ===  defaultVal && departure_time === defaultVal && isDelayed === 0)) {
+                data.seat_number = el['passenger.seat_number'];
+                data.status = 'arrived';
             }
 
-            if (arrival_time === defaultVal && departure_time === defaultVal) {
+            if (arrival_time === defaultVal && departure_time === defaultVal && isDelayed === 1) {
                 //delayed or not yet arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'delayed';
@@ -141,7 +145,7 @@ module.exports.getLuggageStatus = (req, res) => {
 module.exports.getPickedUp = (req, res) => {
     /*  
         Mag papasa tayo dito syempre ng Flight number,
-        Ito yung script na mag rurun para mang recognize if yung luggage ay kinuha na or na pick up na.
+        Ito yung script na mag rurun para mang recognize if yung luggage ay kinuha na or na pick up na or if it's delayed.
     */
     const flightId = req.query.flightId;
     Luggage.findAll({
@@ -154,25 +158,32 @@ module.exports.getPickedUp = (req, res) => {
         var defaultVal = '1111-11-11 11:11:11';
         luggage.forEach((el, i) => {
             data = {}
-            req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
-
+            
             arrival_time = el.arrival_time;
             departure_time = el.departure_time;
             if (arrival_time !=  defaultVal && departure_time === defaultVal) {
                 //arrived
+                req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'arrived';
-                Luggage.update(req.body,{
-                    where : { 
-                        id : el.id, 
-                    }
-                })
-                .then( data => {
-                    /* res.json({
-                        result : data
-                    }); */
-                });
             }
+            if (arrival_time ===  defaultVal && departure_time === defaultVal) {
+                //arrived
+                data.seat_number = el['passenger.seat_number'];
+                data.status = 'delayed';
+                req.body.isDelayed = 1;
+            }
+
+            Luggage.update(req.body,{
+                where : {
+                    id : el.id, 
+                }
+            })
+            .then( data => {
+                /* res.json({
+                    result : data
+                }); */
+            });
         })
     });
 
@@ -180,14 +191,19 @@ module.exports.getPickedUp = (req, res) => {
 
 module.exports.updateLuggageStatus = (req, res) => {
     /* 
+        rfidScan
         Dito papasok if na tatap yung luggage sa  carousel. 
     */
     //Receives RFID
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
+    
     const rfid = req.query.rfid;
+    const flightId = req.query.flightId;
     console.log(rfid);
     Luggage.findOne({
-        where: { rfid_uid : rfid},
+        where: { 
+            rfid_uid : rfid,
+            flight_id : flightId,
+        },
         raw: true,
         include : Passenger
     }).then( luggage => {
@@ -203,6 +219,7 @@ module.exports.updateLuggageStatus = (req, res) => {
             if (arrival_time === '1111-11-11 11:11:11') {
                 luggage.arrival_time = moment().format('YYYY-MM-DD HH:mm:ss');
                 luggage.departure_time = moment('1111-11-11 11:11:11');
+                luggage.isDelayed = 0;
                 
                 //no time in
                 Luggage.update(luggage,{
@@ -217,7 +234,7 @@ module.exports.updateLuggageStatus = (req, res) => {
                     });
                 });
             } else if (arrival_time !== '1111-11-11 11:11:11' && departure_time !== '1111-11-11 11:11:11') {
-                // console.log(luggage);
+                //has Time out but the luggage is returned so departure_time will be updated to default
                 luggage.departure_time = moment('1111-11-11 11:11:11');
                 // req.body.departure_time = moment('1111-11-11 11:11:11');
 

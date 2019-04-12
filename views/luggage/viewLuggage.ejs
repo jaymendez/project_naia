@@ -247,16 +247,22 @@
     var database = firebase.database();
     
     var rfidRef = firebase.database().ref('rfid:');
+    var dataRef = firebase.database().ref('data:');
     
     rfidRef.once('value').then((snapshot)=> {
-        console.log(snapshot.val().RFID_ID);
-        console.log(snapshot.key);
+        // console.log(snapshot.val().RFID_ID);
+        // console.log(snapshot.key);
     });
-    
+     
+    dataRef.endAt().limitToLast(1).on('child_added', function(snapshot) {
+        console.log(snapshot.val().RFID_ID);
+        // console.log(snapshot.key);
+    });
+
     rfidRef.on('child_changed', function(data) {
-        console.log(data);
+        // console.log(data);
         const rfid = data.val();
-        scanRfid(rfid);
+        scanRfid(rfid,"<%- resultData.flight_id %>");
     });
 
     $('#viewDetails').on('click', function() {
@@ -297,16 +303,17 @@
       
 });
 
-function scanRfid(rfid_uid) {
+function scanRfid(rfid_uid, flight_id) {
     $.get("/rfidScan",{
-        rfid: rfid_uid
+        rfid: rfid_uid,
+        flightId : flight_id
     }).then( (json) => {
         //expected result dito is yung seat number.
         //first arrival
         console.log(json);
         const seat_number = json.seat_number; 
         $('#seat-'+seat_number).css('background-color','rgb(96, 226, 96)');
-
+        getLuggageCount(flight_id);
     });
 }
 
