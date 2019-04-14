@@ -55,7 +55,7 @@
                         <ul>
                             <% errors.forEach( (err, i) => { %> 
                                  <li><%= err.error %></li>
-                            <% }); %> RENDER
+                            <% }); %> 
                         </ul>
                         </div>
                     </div>
@@ -69,11 +69,21 @@
 <% } %>
 
 <% if (success_msg != '') { %>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <%= success_msg %> 
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+    <div class="row alert_box" id="alert_box" style="display:block">
+        <div class="col s12 m12">
+            <div class="card green accent-4">
+                <div class="row">
+                    <div class="col s12 push-s2">
+                        <div class="card-content white-text">
+                                <%= success_msg %>
+                        </div>
+                    </div>
+                    <div class="col s1 right">
+                        <i class="fa fa-times icon_style" id="alert_close" aria-hidden="true"><i class="material-icons">close</i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 <% } %>
 
@@ -146,6 +156,6 @@
         $('#alert_box').on('click',function(){
 			$( "#alert_box" ).fadeOut( "slow", function() {
 		    });
-		});
+        });
     });
 </script> 

@@ -54,8 +54,8 @@
         <main>
             <div class="table-container" style="">
                 <a href="/flight/view" id="back" class="waves-effect waves-light btn modal-trigger"><i class="material-icons left">arrow_back</i>GO BACK</a>
-
-                <a href="#modal2" id="viewDetails" data-flightId="<%= resultData.flight_id %>" data-flight_number="<%= resultData.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a>
+<!-- 
+                <a href="#modal2" id="viewDetails" data-flightId="<%= resultData.flight_id %>" data-flight_number="<%= resultData.flight_number %>" class="waves-effect waves-light btn right modal-trigger"><i class="material-icons left">add_box</i>View Details</a> -->
                 <table id="table" class="display centered highlight yearTable" width="100%">
                     <thead>
                         <tr class>
@@ -155,12 +155,12 @@
                 <div class="legend">
                     <ul>
                         <div class="row">
-                            <div class="col s3 center-align">
+                            <div class="col s2 center-align">
                                 <li>
                                     <h3>
                                         Arrived
                                         <!-- <div style="width:90px; height:40px; background-color:#f44336; display:inline-block"></div> -->
-                                        &nbsp;&nbsp;  <i class="Medium material-icons" style="color:rgb(96, 226, 96)">work</i>
+                                        &nbsp; <i class="Medium material-icons" style="color:rgb(96, 226, 96)">work</i>
                                     </h3> 
                                 </li>
                             </div>
@@ -168,15 +168,23 @@
                                 <li>
                                     <h3>Picked Up
                                         <!-- <div style="width:60px; height:40px; background-color:#5498ff; display:inline-block"></div> -->
-                                        &nbsp;&nbsp;<i class="Medium material-icons" style="color:#5498ff">work</i>
+                                        &nbsp;<i class="Medium material-icons" style="color:#5498ff">work</i>
                                     </h3> 
                                 </li>
                             </div>
-                            <div class="col s3 center-align">
+                            <div class="col s2 center-align">
                                 <li>
                                     <h3>Delayed
                                         <!-- <div style="width:60px; height:40px; background-color:#f44336; display:inline-block"></div> -->
-                                        &nbsp;&nbsp;<i class="Medium material-icons" style="color:#f44336">work</i>
+                                        &nbsp;<i class="Medium material-icons" style="color:#f44336">work</i>
+                                    </h3> 
+                                </li>
+                            </div>
+                            <div class="col s2 center-align">
+                                <li>
+                                    <h3>Waiting
+                                        <!-- <div style="width:60px; height:40px; background-color:#f44336; display:inline-block"></div> -->
+                                        &nbsp;<i class="Medium material-icons" style="color:#f4ff49">work</i>
                                     </h3> 
                                 </li>
                             </div>
@@ -185,7 +193,7 @@
                                     <h3>
                                         Unoccupied
                                         <!-- <div style="width:90px; height:40px; background-color:#f44336; display:inline-block"></div> -->
-                                        &nbsp;&nbsp;  <i class="Medium material-icons" style="color:rgba(94, 94, 95, 0.59)">work</i>
+                                        &nbsp; <i class="Medium material-icons" style="color:rgba(94, 94, 95, 0.59)">work</i>
                                     </h3> 
                                 </li>
                             </div>
@@ -224,9 +232,11 @@
         // $("#circleBorder").html(seconds);
         // $("#currDateTime").html("As of " + moment().format('MMMM D YYYY, h:mm a'));
         if (seconds == 0) {
-            getPickedUp("<%- resultData.flight_id %>");
             getLuggageStatus("<%- resultData.flight_id %>");
             getLuggageCount("<%- resultData.flight_id %>");
+        }
+        if (seconds == 30) {
+            getPickedUp("<%- resultData.flight_id %>");
         }
         if (seconds <= 0)
             seconds = 60;
@@ -257,6 +267,8 @@
     dataRef.endAt().limitToLast(1).on('child_added', function(snapshot) {
         console.log(snapshot.val().RFID_ID);
         // console.log(snapshot.key);
+        rfid = snapshot.val().RFID_ID;
+        scanRfid(rfid,"<%- resultData.flight_id %>");
     });
 
     rfidRef.on('child_changed', function(data) {
@@ -273,6 +285,8 @@
             flight_id : flight_id
         }).done( (json) => {
             dataTable.destroy();
+            console.log(json.arrivedCount);
+            console.log(json.delayedCount);
             dataTable = $('.luggageDetailsTable').DataTable({
                 data: json.data,
                 dom: 'Bfrtip',
@@ -286,8 +300,8 @@
                             $(win.document.body)
                             .prepend('<center><h5>Luggage Report Summary for: <strong></br>'+ flight_num +'</strong></h5></center>'+
                                     'Date:' +  '</br> '+
-                                    'Total Arrived:' + ' </br>' +
-                                    'Total Delayed:' + ' </br>'   
+                                    'Total Arrived:&nbsp;' +json.arrivedCount +' </br>' +
+                                    'Total Delayed:&nbsp;' +json.delayedCount +' </br>'   
                             );
                         }
                     }
@@ -296,7 +310,11 @@
                     { data: 'name'},
                     { data: 'arrival_time'},
                     { data: 'departure_time'},
-                ]
+                ],
+                "initComplete" : function(settings, json) {
+                    $('.totalArrived').html('Total Arrived:'+ json.arrivedCount);
+                    $('.totalDelayed').html('Total Delayed:'+ json.delayedCount);
+                }
             }) // ===== END OF DATATABLES
         })
     }); 
@@ -330,7 +348,9 @@ function getLuggageStatus(flight_id) {
                 $('#seat-'+el.seat_number).css('background-color','#f44336');
             } else if (el.status === 'pickedUp') {
                 $('#seat-'+el.seat_number).css('background-color','#5498ff');
-            }
+            } else if (el.status === 'waiting') {
+                $('#seat-'+el.seat_number).css('background-color','#f4ff49');
+            } 
         });
     });
 }

@@ -45,7 +45,8 @@ module.exports.registerLuggage = (req, res) => {
                 console.log(req.body);
                 Luggage.create(req.body)
                 .then( luggage => {
-                    res.redirect('/home');
+                    req.flash('success_msg', 'READING SUCCESSFUL');
+                    res.redirect('/luggage/register');
                     console.log(luggage);
                     // res.render('/home')
                 })
@@ -116,9 +117,11 @@ module.exports.getLuggageStatus = (req, res) => {
                 //arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'arrived';
-            } else if ((arrival_time ===  defaultVal && departure_time === defaultVal && isDelayed === 0)) {
+            } 
+            if ((arrival_time ===  defaultVal && departure_time === defaultVal && isDelayed === 0)) {
+                //waiting
                 data.seat_number = el['passenger.seat_number'];
-                data.status = 'arrived';
+                data.status = 'waiting';
             }
 
             if (arrival_time === defaultVal && departure_time === defaultVal && isDelayed === 1) {
@@ -171,7 +174,7 @@ module.exports.getPickedUp = (req, res) => {
                 //arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'delayed';
-                req.body.isDelayed = 1;
+                // req.body.isDelayed = 1;
             }
 
             Luggage.update(req.body,{
@@ -337,15 +340,25 @@ module.exports.viewLuggageDetails = (req, res) => {
         ]
     }).then( luggage => {
         if (luggage) {
+            console.log(luggage);
             var resultData = [];
+            var arrivedCount = 0;
+            var delayedCount = 0;
             luggage.forEach((el, i) => {
                 var data = {};
                 data.name = el['passenger.first_name'] + " " + el['passenger.last_name'];
                 data.arrival_time = el.arrival_time ? moment(el.arrival_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
                 data.departure_time = el.departure_time ?  moment(el.departure_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+                if (el.isDelayed === 1) {
+                    delayedCount++;
+                } 
+                else if (el.arrival_time !== '1111-11-11 11:11:11') {
+                    arrivedCount++;
+                }
                 resultData.push(data);
             });
-            res.json({data : resultData});
+            
+            res.json({data : resultData, arrivedCount : arrivedCount, delayedCount : delayedCount});
         }
     });
 }
@@ -389,5 +402,39 @@ module.exports.getLuggageCount = (req, res) => {
         }
         res.json({resultData : arr});
     });
+}
 
+module.exports.endSession = (req, res) => {
+    const flightId = req.body.flightId;
+    Luggage.findAll({
+        where: { flight_id : flightId},
+        raw: true,
+    }).then( luggage => {
+        var defaultVal = '1111-11-11 11:11:11';
+        console.log(luggage);
+        luggage.forEach((el, i) => {
+            arrival_time = el.arrival_time;
+            departure_time = el.departure_time;
+
+            if (arrival_time ===  defaultVal && departure_time === defaultVal && el.isDelayed === 0) {
+                //update all waiting to delayed.
+                req.body.isDelayed = 1;
+                Luggage.update(req.body,{
+                    where : {
+                        id : el.id, 
+                    }
+                })
+                .then( data => {
+                    /* res.json({
+                        result : data
+                    }); */
+                });
+            }
+
+            
+        })
+        res.json({
+            result : 'success'
+        });
+    })
 }

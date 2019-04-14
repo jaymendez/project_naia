@@ -83,7 +83,8 @@
                             if (!data) return "";
                             else {
                                 return '<center><a href="#" title="Simulate Flight" data-flightId="'+data+'" data-flight_number="'+row.flight_number+'" class="simulateFlight"><i class="material-icons tooltipped">flight_takeoff</i></a>&nbsp;' +
-                                '<a href="#modal2" id="viewDetails" title="View Luggage Logs" data-flightId="'+data+'" data-flight_number="'+ row.flight_number+'" class="modal-trigger viewDetails"><i class="material-icons">search</i></a>&nbsp;' +
+                                '<a href="#" title="End Session" data-flightId="'+data+'" data-flight_number="'+ row.flight_number+'" data-date="'+ row.starttime +'" class="endSession"><i class="material-icons">done_all</i></a>&nbsp;' +    
+                                '<a href="#modal2" id="viewDetails" title="View Luggage Logs" data-flightId="'+data+'" data-flight_number="'+ row.flight_number+'" data-date="'+ row.starttime +'" class="modal-trigger viewDetails"><i class="material-icons">search</i></a>&nbsp;' +
                                 '<a href="/dashboard/'+data+'" class="viewDashboard" id="dashboard-btn" title="View Luggage Dashboard"  data-id="'+data+'"><i class="Medium material-icons">cast</i></a></center>'
                             }
                         }
@@ -105,11 +106,14 @@
                     $('.viewDetails').on('click', function() {
                         const flight_id = $(this).data('flightid');
                         const flight_num = $(this).data('flight_number');
+                        const date = $(this).data('date');
                         $('.luggageDetailsBody').html('');
                         $.get("/luggage/details",{
                             flight_id : flight_id
                         }).done( (json) => {
                             console.log(json);
+                            var arrivedCount = json.arrivedCount;
+                            var delayedCount = json.delayedCount;
                             dataTable.destroy();
                             dataTable = $('.luggageDetailsTable').DataTable({
                                 data: json.data,
@@ -123,9 +127,9 @@
                                         customize: function (win) {
                                             $(win.document.body)
                                             .prepend('<center><h5>Luggage Report Summary for: <strong></br>'+ flight_num +'</strong></h5></center>'+
-                                                    'Date:' +  '</br> '+
-                                                    'Total Arrived:' + ' </br>' +
-                                                    'Total Delayed:' + ' </br>'   
+                                                    'Date:&nbsp;' + date.slice(0,10) + '</br> '+
+                                                    'Total Arrived:&nbsp;' + arrivedCount +' </br>' +
+                                                    'Total Delayed:&nbsp;' + delayedCount +' </br>'   
                                             );
                                         }
                                     }
@@ -134,7 +138,11 @@
                                     { data: 'name'},
                                     { data: 'arrival_time'},
                                     { data: 'departure_time'},
-                                ]
+                                ],
+                                "initComplete" : function(settings, json) {
+                                    $('.totalArrived').html('Total Arrived:&nbsp;'+ arrivedCount);
+                                    $('.totalDelayed').html('Total Delayed: &nbsp;'+ delayedCount);
+                                }
                             }) // ===== END OF DATATABLES
                         })
                     });
@@ -146,6 +154,22 @@
                         }, function(json) {
                             if (json.result) {
                                 location.reload();
+                            }
+                        });
+                    });
+
+                    $('.endSession').on('click', function() {
+                        const flight_id = $(this).data('flightid');
+                        $.post('/flight/endSession', {
+                            flightId : flight_id
+                        }, function(json) {
+                            if (json.result) {
+                                // location.reload();
+                                Swal.fire(
+                                    'Flight Session Ended!',
+                                    'All waiting luggages turned to delayed.',
+                                    'success'
+                                )
                             }
                         });
                     });

@@ -91,6 +91,7 @@ router.get('/getLuggageCount', ensureAuthenticated, luggageController.getLuggage
 router.post('/luggage/register', luggageController.registerLuggage);
 router.get('/luggage/details', ensureAuthenticated, luggageController.viewLuggageDetails);
 router.get('/luggage/getPickedUp', luggageController.getPickedUp);
+router.post('/flight/endSession', luggageController.endSession);
 
 
 
