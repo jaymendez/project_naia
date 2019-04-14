@@ -164,17 +164,24 @@ module.exports.getPickedUp = (req, res) => {
             
             arrival_time = el.arrival_time;
             departure_time = el.departure_time;
-            if (arrival_time !=  defaultVal && departure_time === defaultVal) {
+            if (arrival_time !==  defaultVal && departure_time === defaultVal) {
                 //arrived
                 req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'arrived';
             }
             if (arrival_time ===  defaultVal && departure_time === defaultVal) {
-                //arrived
+                //delayed
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'delayed';
                 // req.body.isDelayed = 1;
+            }
+            if (arrival_time ===  defaultVal && departure_time !== defaultVal) {
+                //Catch errors where arrival time is default while departure time isn't
+                req.body.departure_time = moment(defaultVal).format('YYYY-MM-DD HH:mm:ss');
+                req.body.arrival_time = moment(defaultVal).format('YYYY-MM-DD HH:mm:ss');
+                data.seat_number = el['passenger.seat_number'];
+                data.status = 'arrived';
             }
 
             Luggage.update(req.body,{
