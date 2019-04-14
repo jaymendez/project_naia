@@ -73,7 +73,7 @@ router.post('/flight/simulateFlight', flightController.simulateFlight);
 
 /* Seat Dashboard */
 router.get('/flight/view/:id', ensureAuthenticated, flightController.getLuggageStatus);
-router.get('/dashboard/:id', ensureAuthenticated, luggageController.viewDashboard);
+router.get('/dashboard/:id', luggageController.viewDashboard);
 // router.get('/dashboard/:id', (req,res) => {
 //     res.render('luggage/viewLuggage');
 // });
@@ -85,11 +85,11 @@ router.get('/luggage/register', ensureAuthenticated, (req, res) => {
     });
 });
 
-router.get('/rfidScan', ensureAuthenticated, luggageController.updateLuggageStatus);
-router.get('/getLuggageStatus', ensureAuthenticated, luggageController.getLuggageStatus);
-router.get('/getLuggageCount', ensureAuthenticated, luggageController.getLuggageCount);
+router.get('/rfidScan', luggageController.updateLuggageStatus);
+router.get('/getLuggageStatus', luggageController.getLuggageStatus);
+router.get('/getLuggageCount', luggageController.getLuggageCount);
 router.post('/luggage/register', luggageController.registerLuggage);
-router.get('/luggage/details', ensureAuthenticated, luggageController.viewLuggageDetails);
+router.get('/luggage/details', luggageController.viewLuggageDetails);
 router.get('/luggage/getPickedUp', luggageController.getPickedUp);
 router.post('/flight/endSession', luggageController.endSession);
 
