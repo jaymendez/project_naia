@@ -232,10 +232,13 @@
         // $("#circleBorder").html(seconds);
         // $("#currDateTime").html("As of " + moment().format('MMMM D YYYY, h:mm a'));
         if (seconds == 0) {
-            getLuggageStatus("<%- resultData.flight_id %>");
-            getLuggageCount("<%- resultData.flight_id %>");
+            console.log('1st');
+            // getLuggageStatus("<%- resultData.flight_id %>");
+            // getLuggageCount("<%- resultData.flight_id %>");
+            location.reload();
         }
         if (seconds == 30) {
+            console.log('2nd')
             getPickedUp("<%- resultData.flight_id %>");
         }
         if (seconds <= 0)
@@ -339,13 +342,15 @@ function scanRfid(rfid_uid, flight_id) {
         if (json) {
             const seat_number = json.seat_number; 
             $('#seat-'+seat_number).css('background-color','rgb(96, 226, 96)');
-            getLuggageStatus(flight_id);        
-            getLuggageCount(flight_id);
+            location.reload();
+            // getLuggageStatus(flight_id);        
+            // getLuggageCount(flight_id);
         }
     });
 }
 
 function getLuggageStatus(flight_id) {
+    console.log('getLuggageStatus');
     $.get('/getLuggageStatus',{
         flightId : flight_id
     }).then( (json) => {
@@ -366,6 +371,7 @@ function getLuggageStatus(flight_id) {
 }
 
 function getLuggageCount(flight_id) {
+    console.log('getLiuggageCount');
     $.get('/getLuggageCount', {
         flightId : flight_id
     }).then( (json) => {
@@ -379,6 +385,7 @@ function getLuggageCount(flight_id) {
 }
 
 function getPickedUp(flight_id) {
+    console.log('getPickedUp');
     $.get('/luggage/getPickedUp', {
         flightId : flight_id
     })
