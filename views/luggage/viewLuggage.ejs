@@ -256,25 +256,32 @@
     firebase.initializeApp(config);
     var database = firebase.database();
     
+    var newItems = false;
+
     var rfidRef = firebase.database().ref('rfid:');
     var dataRef = firebase.database().ref('data:');
     
-    rfidRef.once('value').then((snapshot)=> {
-        // console.log(snapshot.val().RFID_ID);
-        // console.log(snapshot.key);
-    });
-     
+    
     dataRef.endAt().limitToLast(1).on('child_added', function(snapshot) {
+        if (!newItems) return;
+
         console.log(snapshot.val().RFID_ID);
         // console.log(snapshot.key);
         rfid = snapshot.val().RFID_ID;
         scanRfid(rfid,"<%- resultData.flight_id %>");
+        
     });
-
+    
     rfidRef.on('child_changed', function(data) {
         // console.log(data);
         const rfid = data.val();
         scanRfid(rfid,"<%- resultData.flight_id %>");
+    });
+    
+    dataRef.endAt().limitToLast(1).once('child_added', snapshot => {
+        console.log('first?');
+        // console.log(snapshot.val().RFID_ID);
+        newItems = true;
     });
 
     $('#viewDetails').on('click', function() {
