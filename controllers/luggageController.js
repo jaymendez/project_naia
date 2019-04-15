@@ -156,56 +156,58 @@ module.exports.getPickedUp = (req, res) => {
         raw: true,
         include: [Passenger]
     }).then( luggage => {
-        resultData = [];
-        // console.log(luggage);
-        var defaultVal = '1111-11-11 11:11:11';
-        luggage.forEach((el, i) => {
-            data = {}
-            
-            arrival_time = el.arrival_time;
-            departure_time = el.departure_time;
-            if (arrival_time !==  defaultVal && departure_time === defaultVal) {
-                //arrived
-                req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
-                data.seat_number = el['passenger.seat_number'];
-                data.status = 'arrived';
-
-                Luggage.update(req.body,{
-                    where : {
-                        id : el.id, 
-                    }
-                })
-                .then( data => {
-                    /* res.json({
-                        result : data
-                    }); */
-                });
-            }
-            if (arrival_time ===  defaultVal && departure_time === defaultVal) {
-                //delayed
-                data.seat_number = el['passenger.seat_number'];
-                data.status = 'delayed';
-                // req.body.isDelayed = 1;
-            }
-            if (arrival_time ===  defaultVal && departure_time !== defaultVal) {
-                //Catch errors where arrival time is default while departure time isn't
-                req.body.departure_time = moment(defaultVal).format('YYYY-MM-DD HH:mm:ss');
-                req.body.arrival_time = moment(defaultVal).format('YYYY-MM-DD HH:mm:ss');
-                data.seat_number = el['passenger.seat_number'];
-                data.status = 'arrived';
-
-                Luggage.update(req.body,{
-                    where : {
-                        id : el.id, 
-                    }
-                })
-                .then( data => {
-                    /* res.json({
-                        result : data
-                    }); */
-                });
-            }
-        })
+        if (luggage) {
+            resultData = [];
+            // console.log(luggage);
+            var defaultVal = '1111-11-11 11:11:11';
+            luggage.forEach((el, i) => {
+                data = {}
+                
+                arrival_time = el.arrival_time;
+                departure_time = el.departure_time;
+                if (arrival_time !==  defaultVal && departure_time === defaultVal) {
+                    //arrived
+                    req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
+                    data.seat_number = el['passenger.seat_number'];
+                    data.status = 'arrived';
+    
+                    Luggage.update(req.body,{
+                        where : {
+                            id : el.id, 
+                        }
+                    })
+                    .then( data => {
+                        /* res.json({
+                            result : data
+                        }); */
+                    });
+                }
+                if (arrival_time ===  defaultVal && departure_time === defaultVal) {
+                    //delayed
+                    data.seat_number = el['passenger.seat_number'];
+                    data.status = 'delayed';
+                    // req.body.isDelayed = 1;
+                }
+                if (arrival_time ===  defaultVal && departure_time !== defaultVal) {
+                    //Catch errors where arrival time is default while departure time isn't
+                    req.body.departure_time = moment(defaultVal).format('YYYY-MM-DD HH:mm:ss');
+                    req.body.arrival_time = moment(defaultVal).format('YYYY-MM-DD HH:mm:ss');
+                    data.seat_number = el['passenger.seat_number'];
+                    data.status = 'arrived';
+    
+                    Luggage.update(req.body,{
+                        where : {
+                            id : el.id, 
+                        }
+                    })
+                    .then( data => {
+                        /* res.json({
+                            result : data
+                        }); */
+                    });
+                }
+            })
+        }
     });
 
 }
