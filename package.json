@@ -22,6 +22,7 @@
     "express-session": "^1.15.6",
     "express-validator": "^5.3.1",
     "jshint": "^2.10.2",
+    "moment-duration-format": "^2.2.2",
     "moment-timezone": "^0.5.23",
     "mysql2": "^1.6.5",
     "nodemon": "^1.18.10",

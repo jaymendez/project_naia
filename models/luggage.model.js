@@ -46,6 +46,11 @@ const Luggage = sequelize.define('luggage', {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: 0
+    }, 
+    lastScan: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: '1111-11-11 11:11:11',
     }
   }, {
     validate : {
