@@ -51,17 +51,20 @@ module.exports.registerLuggage = (req, res) => {
                     // res.render('/home')
                 })
                 .catch( err => {
-                    err.errors.forEach((el,i) => {
-                        data = {};
-                        data.field = el.path;
-                        data.error = el.message;
-                        errors.push(data)
-                        errs.push(el.message);
-                    });
-                    res.render('luggage/createLuggage', {
-                        messages : errors,
-                        formValues : formValues,
-                    });
+                    if (err) {
+                        err.errors.forEach((el,i) => {
+                            data = {};
+                            data.field = el.path;
+                            data.error = el.message;
+                            errors.push(data)
+                            errs.push(el.message);
+                        });
+                        res.render('luggage/createLuggage', {
+                            messages : errors,
+                            formValues : formValues,
+                        });
+                    }
+                    res.redirect('/luggage/register');                    
                 });
             } else {
                 data = {}
