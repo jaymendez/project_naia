@@ -110,39 +110,62 @@ module.exports.getLuggageStatus = (req, res) => {
         resultData = [];
         // console.log(luggage);
         var defaultVal = '1111-11-11 11:11:11';
+        var result = [];
         luggage.forEach((el, i) => {
             data = {}
             
             arrival_time = el.arrival_time;
             departure_time = el.departure_time;
             isDelayed = el.isDelayed;
+            if (result[el['passenger.seat_number']]) {
+                if (result[el['passenger.seat_number']].status === 'waiting') {
+                    return;
+                }
+            }
             if (arrival_time !=  defaultVal && departure_time === defaultVal) {
                 //arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'arrived';
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'arrived'
+                }
             } 
             if ((arrival_time ===  defaultVal && departure_time === defaultVal && isDelayed === 0)) {
                 //waiting
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'waiting';
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'waiting'
+                }
             }
 
             if (arrival_time === defaultVal && departure_time === defaultVal && isDelayed === 1) {
                 //delayed or not yet arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'delayed';
-
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'delayed'
+                }
             }
 
             if (arrival_time != defaultVal && departure_time != defaultVal) {
                 //picked up
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'pickedUp';
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'pickedUp'
+                }
             }
             resultData.push(data);
         })
+        console.log(result);
         res.json({
-            resultData : resultData
+            resultData,
+            result
         });
     });
 
