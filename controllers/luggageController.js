@@ -120,6 +120,8 @@ module.exports.getLuggageStatus = (req, res) => {
             if (result[el['passenger.seat_number']]) {
                 if (result[el['passenger.seat_number']].status === 'waiting') {
                     return;
+                } else if (result[el['passenger.seat_number']].status === 'arrived') {
+                    return;
                 }
             }
             if (arrival_time !=  defaultVal && departure_time === defaultVal) {
