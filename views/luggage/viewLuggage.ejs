@@ -236,15 +236,13 @@
             seconds--;
         // $("#circleBorder").html(seconds);
         // $("#currDateTime").html("As of " + moment().format('MMMM D YYYY, h:mm a'));
-        tenSecs = seconds % 10;
-        if (tenSecs%1 != 0) {
+        if (seconds == 0) {
             console.log('1st');
-            getLuggageStatus("<%- resultData.flight_id %>");
-            getLuggageCount("<%- resultData.flight_id %>");
-            // location.reload();
+            // getLuggageStatus("<%- resultData.flight_id %>");
+            // getLuggageCount("<%- resultData.flight_id %>");
+            location.reload();
         }
-        if (seconds == 30) {
-            console.log('2nd')
+        if (seconds == 10) {
             getPickedUp("<%- resultData.flight_id %>");
         }
         if (seconds <= 0)
