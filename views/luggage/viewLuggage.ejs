@@ -227,9 +227,10 @@
     $('.sidenav').sidenav();
     $('.sidenav').sidenav('close');
  
+    getPickedUp("<%- resultData.flight_id %>");
     getLuggageStatus("<%- resultData.flight_id %>");
     getLuggageCount("<%- resultData.flight_id %>");
-    var seconds = 60;
+    var seconds = 15;
     window.setInterval(function(){
         if (seconds > 0)
             seconds--;
@@ -247,7 +248,7 @@
             getPickedUp("<%- resultData.flight_id %>");
         }
         if (seconds <= 0)
-            seconds = 60;
+            seconds = 15;
     }, 1000);
     
     dataTable = $('.luggageDetailsTable').DataTable({})
@@ -272,12 +273,10 @@
     
     dataRef.endAt().limitToLast(1).on('child_added', function(snapshot) {
         if (!newItems) return;
-
         console.log(snapshot.val().RFID_ID);
         // console.log(snapshot.key);
         rfid = snapshot.val().RFID_ID;
         scanRfid(rfid,"<%- resultData.flight_id %>");
-        
     });
     
     rfidRef.on('child_changed', function(data) {
@@ -332,8 +331,7 @@
                 }
             }) // ===== END OF DATATABLES
         })
-    }); 
-      
+    });       
 });
 
 function scanRfid(rfid_uid, flight_id) {

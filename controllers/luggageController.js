@@ -6,7 +6,7 @@ const Airplane = require('../models/airplane.model');
 const Passenger = require('../models/passenger.model');
 const Luggage = require('../models/luggage.model');
 
-
+const REV_TIME = 15;
 moment.tz.setDefault("Asia/Manila");
 module.exports.registerLuggage = (req, res) => {
     console.log(req.body);
@@ -51,17 +51,20 @@ module.exports.registerLuggage = (req, res) => {
                     // res.render('/home')
                 })
                 .catch( err => {
-                    err.errors.forEach((el,i) => {
-                        data = {};
-                        data.field = el.path;
-                        data.error = el.message;
-                        errors.push(data)
-                        errs.push(el.message);
-                    });
-                    res.render('luggage/createLuggage', {
-                        messages : errors,
-                        formValues : formValues,
-                    });
+                    if (err) {
+                        err.errors.forEach((el,i) => {
+                            data = {};
+                            data.field = el.path;
+                            data.error = el.message;
+                            errors.push(data)
+                            errs.push(el.message);
+                        });
+                        res.render('luggage/createLuggage', {
+                            messages : errors,
+                            formValues : formValues,
+                        });
+                    }
+                    res.redirect('/luggage/register');                    
                 });
             } else {
                 data = {}
@@ -107,30 +110,49 @@ module.exports.getLuggageStatus = (req, res) => {
         resultData = [];
         // console.log(luggage);
         var defaultVal = '1111-11-11 11:11:11';
-        let totalScan = 0;
+        var result = [];
+        totalScan = 0;
         luggage.forEach((el, i) => {
             data = {}
             
             arrival_time = el.arrival_time;
             departure_time = el.departure_time;
             isDelayed = el.isDelayed;
+            if (result[el['passenger.seat_number']]) {
+                if (result[el['passenger.seat_number']].status === 'waiting') {
+                    return;
+                } else if (result[el['passenger.seat_number']].status === 'arrived') {
+                    return;
+                }
+            }
             if (arrival_time !=  defaultVal && departure_time === defaultVal) {
                 //arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'arrived';
                 totalScan++;
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'arrived'
+                }
             } 
             if ((arrival_time ===  defaultVal && departure_time === defaultVal && isDelayed === 0)) {
                 //waiting
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'waiting';
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'waiting'
+                }
             }
 
             if (arrival_time === defaultVal && departure_time === defaultVal && isDelayed === 1) {
                 //delayed or not yet arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'delayed';
-
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'delayed'
+                }
             }
 
             if (arrival_time != defaultVal && departure_time != defaultVal) {
@@ -138,11 +160,17 @@ module.exports.getLuggageStatus = (req, res) => {
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'pickedUp';
                 totalScan++;
+                result[el['passenger.seat_number']] = {
+                    seat_number: el['passenger.seat_number'],
+                    status: 'pickedUp'
+                }
             }
             resultData.push(data);
         })
+        console.log(result);
         res.json({
             resultData,
+            result,
             totalScan
         });
     });
@@ -163,28 +191,37 @@ module.exports.getPickedUp = (req, res) => {
         if (luggage) {
             resultData = [];
             // console.log(luggage);
+            totalSeconds = 0;
             var defaultVal = '1111-11-11 11:11:11';
+            now = moment();
+            console.log(luggage);
+            //get totalSeconds of difference of last time it was scanned and time now.
+            
             luggage.forEach((el, i) => {
+                lastScan = moment(el.lastScan);
+                if (el.lastScan.toString() !== defaultVal) totalSeconds = Math.abs(now - lastScan) / 1000;
                 data = {}
                 
                 arrival_time = el.arrival_time;
                 departure_time = el.departure_time;
                 if (arrival_time !==  defaultVal && departure_time === defaultVal) {
                     //arrived
-                    req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
-                    data.seat_number = el['passenger.seat_number'];
-                    data.status = 'arrived';
-    
-                    Luggage.update(req.body,{
-                        where : {
-                            id : el.id, 
-                        }
-                    })
-                    .then( data => {
-                        /* res.json({
-                            result : data
-                        }); */
-                    });
+                    if (totalSeconds > REV_TIME) {
+                        req.body.departure_time = moment().format('YYYY-MM-DD HH:mm:ss');
+                        data.seat_number = el['passenger.seat_number'];
+                        data.status = 'pickedUp';
+        
+                        Luggage.update(req.body,{
+                            where : {
+                                id : el.id, 
+                            }
+                        })
+                        .then( data => {
+                            /* res.json({
+                                result : data
+                            }); */
+                        });
+                    }
                 }
                 if (arrival_time ===  defaultVal && departure_time === defaultVal) {
                     //delayed
@@ -239,16 +276,18 @@ module.exports.updateLuggageStatus = (req, res) => {
             seat_number = luggage['passenger.seat_number'];
             // arrival_time = moment(new Date(luggage.arrival_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
             // departure_time = moment(new Date(luggage.departure_time).toISOString(), "YYYY-MM-DD HH:mm:ss").format('YYYY-MM-DD HH:mm:ss');
-            console.log(luggage.departure_time);
+            console.log('scan RFID');            
             arrival_time = luggage.arrival_time; 
             departure_time = luggage.departure_time; 
+            luggage.lastScan = moment().format('YYYY-MM-DD HH:mm:ss');
+            console.log(luggage);
             
             if (arrival_time === '1111-11-11 11:11:11') {
                 //Waiting siya
                 luggage.arrival_time = moment().format('YYYY-MM-DD HH:mm:ss');
                 luggage.departure_time = moment('1111-11-11 11:11:11');
                 luggage.isDelayed = 0;
-                
+                console.log(luggage);
                 //no time in
                 Luggage.update(luggage,{
                     where : { 
@@ -266,8 +305,20 @@ module.exports.updateLuggageStatus = (req, res) => {
                 //has Time out but the luggage is returned so departure_time will be updated to default
                 luggage.departure_time = moment('1111-11-11 11:11:11');
                 // req.body.departure_time = moment('1111-11-11 11:11:11');
-
-                // console.log(luggage);
+                Luggage.update(luggage,{
+                    where : { 
+                        id : luggage.id
+                    }
+                })
+                .then( data => {
+                    console.log(data);
+                    res.json({
+                        seat_number : seat_number,
+                    });
+                });
+            } else if (arrival_time !== '1111-11-11 11:11:11' && departure_time === '1111-11-11 11:11:11') {
+                //update lastScan
+                luggage.departure_time = moment('1111-11-11 11:11:11');
                 Luggage.update(luggage,{
                     where : { 
                         id : luggage.id
