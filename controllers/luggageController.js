@@ -107,6 +107,7 @@ module.exports.getLuggageStatus = (req, res) => {
         resultData = [];
         // console.log(luggage);
         var defaultVal = '1111-11-11 11:11:11';
+        let totalScan = 0;
         luggage.forEach((el, i) => {
             data = {}
             
@@ -117,6 +118,7 @@ module.exports.getLuggageStatus = (req, res) => {
                 //arrived
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'arrived';
+                totalScan++;
             } 
             if ((arrival_time ===  defaultVal && departure_time === defaultVal && isDelayed === 0)) {
                 //waiting
@@ -135,11 +137,13 @@ module.exports.getLuggageStatus = (req, res) => {
                 //picked up
                 data.seat_number = el['passenger.seat_number'];
                 data.status = 'pickedUp';
+                totalScan++;
             }
             resultData.push(data);
         })
         res.json({
-            resultData : resultData
+            resultData,
+            totalScan
         });
     });
 
@@ -369,8 +373,8 @@ module.exports.viewLuggageDetails = (req, res) => {
             luggage.forEach((el, i) => {
                 var data = {};
                 data.name = el['passenger.first_name'] + " " + el['passenger.last_name'];
-                data.arrival_time = el.arrival_time ? moment(el.arrival_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
-                data.departure_time = el.departure_time ?  moment(el.departure_time, "YYYY-MM-DD HH:mm").format('MM/DD/YYYY HH:mm') : '';
+                data.arrival_time = el.arrival_time ? moment(el.arrival_time, "YYYY-MM-DD HH:mm:ss").format('MM/DD/YYYY HH:mm:ss') : '';
+                data.departure_time = el.departure_time ?  moment(el.departure_time, "YYYY-MM-DD HH:mm:ss").format('MM/DD/YYYY HH:mm:ss') : '';
                 if (el.isDelayed === 1) {
                     delayedCount++;
                 } 
