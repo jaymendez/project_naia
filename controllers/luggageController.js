@@ -118,13 +118,6 @@ module.exports.getLuggageStatus = (req, res) => {
             arrival_time = el.arrival_time;
             departure_time = el.departure_time;
             isDelayed = el.isDelayed;
-            if (result[el['passenger.seat_number']]) {
-                if (result[el['passenger.seat_number']].status === 'waiting') {
-                    return;
-                } else if (result[el['passenger.seat_number']].status === 'arrived') {
-                    return;
-                }
-            }
             if (arrival_time !=  defaultVal && departure_time === defaultVal) {
                 //arrived
                 data.seat_number = el['passenger.seat_number'];
@@ -165,7 +158,15 @@ module.exports.getLuggageStatus = (req, res) => {
                     status: 'pickedUp'
                 }
             }
+            
             resultData.push(data);
+            if (result[el['passenger.seat_number']]) {
+                if (result[el['passenger.seat_number']].status === 'waiting') {
+                    return;
+                } else if (result[el['passenger.seat_number']].status === 'arrived') {
+                    return;
+                }
+            }
         })
         console.log(result);
         res.json({
